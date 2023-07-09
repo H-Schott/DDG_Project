@@ -27,6 +27,7 @@ add_definitions(-DGLEW_STATIC)
 add_subdirectory(dependency/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(dependency/glew-cmake EXCLUDE_FROM_ALL)
 include_directories(dependency/imgui)
+include_directories(dependency/glm)
 
 # imgui source files
 set(IMGUI_SRC_DIR dependency/imgui)
