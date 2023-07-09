@@ -1,6 +1,17 @@
 #include "camera.hpp"
 
-Camera::Camera(glm::vec3 position = glm::vec3(0.f), glm::vec3 up = glm::vec3(0.f, 1.f, 0.f), float yaw = YAW, float pitch = PITCH) {
+
+Camera::Camera() {
+    Position = glm::vec3(0.f);
+    Up = glm::vec3(0.f, 1.f, 0.f);
+    Yaw = YAW;
+    Pitch = PITCH;
+
+    updateCameraVectors();
+}
+
+
+Camera::Camera(glm::vec3 position, glm::vec3 up = glm::vec3(0.f, 1.f, 0.f), float yaw = YAW, float pitch = PITCH) {
     Position = position;
     Up = up;
     Yaw = yaw;

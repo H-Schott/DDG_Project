@@ -8,9 +8,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "../imgui/imgui.h"
-#include "../imgui/imgui_impl_opengl3.h"
-#include "../imgui/imgui_impl_glfw.h"
+#include "imgui.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_glfw.h"
 
 #include "stb_image.h"
 #include "shader.hpp"
@@ -92,15 +92,15 @@ int main(int, char**) {
     // glEnable(GL_CULL_FACE);
     // glCullFace(GL_BACK);
 
-    Shader object_shader = Shader("../shaders/object.vert.glsl", "../shaders/object.frag.glsl");
-    Shader debug_shader = Shader("../shaders/debug.vert.glsl", "../shaders/debug.frag.glsl");
+    Shader object_shader = Shader("data/shaders/object.vert.glsl", "data/shaders/object.frag.glsl");
+    Shader debug_shader = Shader("data/shaders/debug.vert.glsl", "data/shaders/debug.frag.glsl");
 
     Mesh mesh_frame = Mesh::Frame();
     Mesh mesh_grid = Mesh::Grid(4);
     //Mesh mesh = Mesh("../ressources/splash/splash.gltf");
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
-    Mesh mesh = Mesh("../ressources/samples/exterior.obj");
+    Mesh mesh = Mesh("data/meshs/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/minifig/lego.obj");
 
     
