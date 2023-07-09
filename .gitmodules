@@ -1,12 +1,12 @@
 [submodule "dependency/glfw"]
 	path = dependency/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "dependency/glm"]
+	path = dependency/glm
+	url = https://github.com/g-truc/glm
 [submodule "dependency/imgui"]
 	path = dependency/imgui
 	url = https://github.com/ocornut/imgui
 [submodule "dependency/glew-cmake"]
 	path = dependency/glew-cmake
 	url = https://github.com/Perlmint/glew-cmake/
-[submodule "dependency/glm"]
-	path = dependency/glm
-	url = https://github.com/g-truc/glm
