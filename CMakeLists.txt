@@ -53,6 +53,7 @@ if (WIN32)
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
 		${SRC_DIR}/shader.hpp
+		${SRC_DIR}/planar_mesh.hpp
 		${SRC_DIR}/stb_image.h
 		${SRC_DIR}/stb_image_write.h
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.h
@@ -64,6 +65,10 @@ else()
 	add_executable(${DEMO} 
 		${IMGUI_SRC_FILES} 
 		${SRC_FILES}
+		${SRC_DIR}/camera.hpp
+		${SRC_DIR}/mesh.hpp
+		${SRC_DIR}/shader.hpp
+		${SRC_DIR}/planar_mesh.hpp
 		${SRC_DIR}/stb_image.h
 		${SRC_DIR}/stb_image_write.h
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.h
