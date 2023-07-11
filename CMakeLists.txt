@@ -52,10 +52,15 @@ if (WIN32)
 		${SRC_FILES}
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
-		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/planar_mesh.hpp
-		${SRC_DIR}/stb_image.h
+		${SRC_DIR}/point.hpp
+		${SRC_DIR}/point2.hpp
+		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/stb_image_write.h
+		${SRC_DIR}/stb_image.h
+		${SRC_DIR}/triangle.hpp
+		${SRC_DIR}/triangle2.hpp
+		${SRC_DIR}/vector.hpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.h
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.cpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_opengl3.h
@@ -67,10 +72,15 @@ else()
 		${SRC_FILES}
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
-		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/planar_mesh.hpp
-		${SRC_DIR}/stb_image.h
+		${SRC_DIR}/point.hpp
+		${SRC_DIR}/point2.hpp
+		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/stb_image_write.h
+		${SRC_DIR}/stb_image.h
+		${SRC_DIR}/triangle.hpp
+		${SRC_DIR}/triangle2.hpp
+		${SRC_DIR}/vector.hpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.h
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.cpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_opengl3.h
