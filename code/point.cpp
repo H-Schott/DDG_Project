@@ -53,4 +53,12 @@ Point Point::operator/(double a) const {
     return Point(x / a, y / a, z / a);
 };
 
+inline double Distance(const Point& p1, const Point& p2) {
+    return (p1 - p2).Norm();
+}
+
+inline double SquaredDistance(const Point& p1, const Point& p2) {
+    return (p1 - p2).SquaredNorm();
+}
+
 //EOF

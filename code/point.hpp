@@ -36,13 +36,9 @@ inline std::ostream& operator<<(std::ostream& os, const Point pt) {
     return os;
 }
 
-inline double Distance(const Point& p1, const Point& p2) {
-    return (p1 - p2).Norm();
-}
+inline double Distance(const Point& p1, const Point& p2);
 
-inline double SquaredDistance(const Point& p1, const Point& p2) {
-    return (p1 - p2).SquaredNorm();
-}
+inline double SquaredDistance(const Point& p1, const Point& p2);
 
 
 inline Point operator*(double a, const Point& pt) { return pt * a; }

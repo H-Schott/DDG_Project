@@ -6,8 +6,8 @@
  * @date 2022-03-05
  */
 
-#ifndef _PLANAR_MESH_H
-#define _PLANAR_MESH_H
+#ifndef __PLANAR_MESH_HPP__
+#define __PLANAR_MESH_HPP__
 
 #include <cmath>
 #include <vector>
@@ -42,7 +42,7 @@ public:
     uint Face_ID[3];
 
     Face2();
-    Face2(uint);
+    //Face2(uint);
     Face2(uint[], uint[]);
     Face2(const std::vector<uint>&, const std::vector<uint>&);
     Face2(uint, uint, uint, uint, uint, uint);

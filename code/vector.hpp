@@ -15,23 +15,23 @@ public:
     double y;
     double z;
 public:
-    Vector() { x = 0; y = 0; z = 0; };
-    Vector(double _x) : x(_x), y(_x), z(_x) {};
-    Vector(double _x, double _y, double _z) : x(_x), y(_y), z(_z) {};
-    Vector(const Point& p) : Vector(p.x, p.y, p.z) {};
+    Vector();
+    Vector(double _x);
+    Vector(double _x, double _y, double _z);
+    Vector(const Point& p);
 
     double operator[](uint id) const;
     double& operator[](uint id);
 
     Vector operator+(const Vector& vec) const;
-    Vector operator-() const { return Vector(-x, -y, -z); };
-    Vector operator-(const Vector& vec) const { return (*this) + (-vec); };
-    Vector operator*(double a) const { return Vector(x * a, y * a, z * a); };
-    Vector operator/(double a) const { return Vector(x / a, y / a, z / a); };
+    Vector operator-() const;
+    Vector operator-(const Vector& vec) const;
+    Vector operator*(double a) const;
+    Vector operator/(double a) const;
 
-    double SquaredNorm() const { return x * x + y * y + z * z; };
-    double Norm() const { return std::sqrt(SquaredNorm()); };
-    Vector Normalized() const { return (*this) / Norm(); };
+    double SquaredNorm() const;
+    double Norm() const;
+    Vector Normalized() const;
 };
 
 
