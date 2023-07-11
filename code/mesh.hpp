@@ -1,5 +1,5 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef __MESH_HPP__
+#define __MESH_HPP__
 
 #include <vector>
 #include <string>
