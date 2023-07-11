@@ -65,5 +65,30 @@ Vector Vector::operator+(const Vector& vec) const {
     return Vector(x + vec.x, y + vec.y, z + vec.z);
 }
 
+double MinComponent(const Vector& vec) {
+    return std::min(vec.x, std::min(vec.y, vec.z));
+}
+
+double MaxComponent(const Vector& vec) {
+    return std::max(vec.x, std::max(vec.y, vec.z));
+}
+
+uint MaxDimension(const Vector& vec) {
+    return (vec.x > vec.y) ? ((vec.x > vec.z) ? 0 : 2) : ((vec.y > vec.z) ? 1 : 2);
+}
+
+Vector Min(const Vector& v1, const Vector& v2) {
+    return Vector(std::min(v1.x, v2.x), std::min(v1.y, v2.y), std::min(v1.z, v2.z));
+}
+
+Vector Max(const Vector& v1, const Vector& v2) {
+    return Vector(std::max(v1.x, v2.x), std::max(v1.y, v2.y), std::max(v1.z, v2.z));
+}
+
+
+Vector Permute(const Vector& vec, uint xid, uint yid, uint zid) {
+    return Vector(vec[xid], vec[yid], vec[zid]);
+}
+
 
 // EOF

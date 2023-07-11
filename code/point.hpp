@@ -43,31 +43,19 @@ inline double SquaredDistance(const Point& p1, const Point& p2);
 
 inline Point operator*(double a, const Point& pt) { return pt * a; }
 
-Point Lerp(double t, const Point& p0, const Point& p1) { return (1 - t) * p0 + t * p1; }
+Point Lerp(double t, const Point& p0, const Point& p1);
 
-Point Max(const Point& p1, const Point& p2) {
-    return Point(std::max(p1.x, p2.x), std::max(p1.y, p2.y), std::max(p1.z, p2.z));
-}
+Point Max(const Point& p1, const Point& p2);
 
-Point Min(const Point& p1, const Point& p2) {
-    return Point(std::min(p1.x, p2.x), std::min(p1.y, p2.y), std::min(p1.z, p2.z));
-}
+Point Min(const Point& p1, const Point& p2);
 
-Point Floor(const Point& pt) {
-    return Point(std::floor(pt.x), std::floor(pt.y), std::floor(pt.z));
-}
+Point Floor(const Point& pt);
 
-Point Ceil(const Point& pt) {
-    return Point(std::ceil(pt.x), std::ceil(pt.y), std::ceil(pt.z));
-}
+Point Ceil(const Point& pt);
 
-Point Abs(const Point& pt) {
-    return Point(std::abs(pt.x), std::abs(pt.y), std::abs(pt.z));
-}
+Point Abs(const Point& pt);
 
-Point Permute(const Point& pt, uint x, uint y, uint z) {
-    return Point(pt[x], pt[y], pt[z]);
-}
+Point Permute(const Point& pt, uint x, uint y, uint z);
 
 
 #endif

@@ -6,6 +6,10 @@ Triangle2::Triangle2(Point2 p1, Point2 p2, Point2 p3) {
     c = p3;
 }
 
+double Triangle2::Area() const {
+    return 0.5 * std::abs(det(a, b));
+};
+
 Point2 Triangle2::Barycentre() const {
     return (a + b + c) / 3.;
 }
