@@ -15,6 +15,8 @@
 #include <fstream>
 #include <map>
 
+#include "point.hpp"
+#include "vector.hpp"
 #include "point2.hpp"
 #include "triangle2.hpp"
 
@@ -42,6 +44,7 @@ public:
     Face2();
     Face2(uint);
     Face2(uint[], uint[]);
+    Face2(const std::vector<uint>&, const std::vector<uint>&);
     Face2(uint, uint, uint, uint, uint, uint);
 
     Triangle2 ToTriangle(const PlanarMesh*) const;

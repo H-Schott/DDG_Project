@@ -20,6 +20,16 @@ Face2::Face2(uint vid[3], uint fid[3]) {
     Face_ID[2] = fid[2];
 }
 
+Face2::Face2(const std::vector<uint>& vid, const std::vector<uint>& fid) {
+    Vertex_ID[0] = vid[0];
+    Vertex_ID[1] = vid[1];
+    Vertex_ID[2] = vid[2];
+
+    Face_ID[0] = fid[0];
+    Face_ID[1] = fid[1];
+    Face_ID[2] = fid[2];
+}
+
 Face2::Face2(uint vid1, uint vid2, uint vid3, uint fid1, uint fid2, uint fid3) {
     Vertex_ID[0] = vid1;
     Vertex_ID[1] = vid2;

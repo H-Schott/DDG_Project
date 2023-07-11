@@ -19,7 +19,7 @@ PlanarMesh::PlanarMesh(const char* file_name) {
 
     double x;
     double y;
-    Point2 data_points[nb_vertices];
+    std::vector<Point2> data_points(nb_vertices, Point2());
     for(uint i = 0; i < nb_vertices; i++){
         ifs >> temp;
         x = temp;
@@ -28,7 +28,7 @@ PlanarMesh::PlanarMesh(const char* file_name) {
         data_points[i] = Point2(x, y);
     }
 
-    uint data_faces[nb_faces][3];
+    std::vector<std::vector<uint>> data_faces(nb_faces, std::vector<uint>(3, 0));
     for(uint i = 0; i < nb_faces; i++){
         ifs >> temp;
         for(uint j = 0; j < 3; j++){
@@ -38,7 +38,7 @@ PlanarMesh::PlanarMesh(const char* file_name) {
     }
     ifs.close();
 
-    uint empty_fid[3] = {0, 0, 0};
+    std::vector<uint> empty_fid(3, 0);
     // init faces du mesh cousu
     for(uint i = 0; i < nb_faces; i++){
         faces.push_back(Face2(data_faces[i], empty_fid));
@@ -286,9 +286,9 @@ bool PlanarMesh::TestDelaunay(uint face_id_1, uint face_id_2) const {
     Point AP = Point(P.x - A.x, P.y - A.y, P.z - A.z);
 
     // on calcule le vecteur normal au plan du cercle circonscrit
-    Vector N = cross(Vector(AB), Vector(AC));
+    Vector N = Cross(Vector(AB), Vector(AC));
 
-    return dot(N, Vector(AP)) > 0;
+    return Dot(N, Vector(AP)) > 0;
 }
 
 void PlanarMesh::PartialLawson(const std::queue<std::pair<uint, uint>>& start_queue) {
@@ -427,59 +427,6 @@ bool PlanarMesh::AddPoint(const Point2& new_point, bool keepDelaunay) {
     }
 }
 
-
-Mesh PlanarMesh::CreateWireframeMesh(bool showInfinite) const {
-    Mesh mesh = Mesh(GL_LINES);
-
-
-    uint nb_face = faces.size();
-    for (uint i = 1; i < nb_face; i++) {
-        
-        if (IsInfinite(i)) {
-            if (showInfinite) mesh.color(Red());
-            else continue;
-        } else mesh.color(White());
-
-        Face2 f = faces[i];
-
-        Point A = vertices[f.Vertex_ID[0]].ToPoint() + int(f.Vertex_ID[0]==0) * Point(0, 0, -1);
-        Point B = vertices[f.Vertex_ID[1]].ToPoint() + int(f.Vertex_ID[1]==0) * Point(0, 0, -1);
-        Point C = vertices[f.Vertex_ID[2]].ToPoint() + int(f.Vertex_ID[2]==0) * Point(0, 0, -1);
-
-        mesh.vertex(A);
-        mesh.vertex(B);
-
-        mesh.vertex(B);
-        mesh.vertex(C);
-
-        mesh.vertex(C);
-        mesh.vertex(A);
-    }
-    
-    return mesh;
-}
-
-Mesh PlanarMesh::CreateTriangleMesh() const {
-    Mesh mesh = Mesh(GL_TRIANGLES);
-
-    mesh.color(White());
-
-    uint nb_face = faces.size();
-    for (uint i = 1; i < nb_face; i++) {
-
-        Face2 f = faces[i];
-
-        Point A = vertices[f.Vertex_ID[0]].ToPoint();
-        Point B = vertices[f.Vertex_ID[1]].ToPoint();
-        Point C = vertices[f.Vertex_ID[2]].ToPoint();
-
-        mesh.vertex(A);
-        mesh.vertex(B);
-        mesh.vertex(C);
-    }
-    
-    return mesh;
-}
 
 void PlanarMesh::DebugLog() const {
     uint nb_vertices = vertices.size();
