@@ -2,6 +2,7 @@
 #define __POINT_HPP__
 
 #include <iostream>
+#include <cmath>
 
 #define uint unsigned int
 
