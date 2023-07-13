@@ -27,6 +27,7 @@ add_definitions(-DGLEW_STATIC)
 add_subdirectory(dependency/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(dependency/glew-cmake EXCLUDE_FROM_ALL)
 add_subdirectory(dependency/assimp EXCLUDE_FROM_ALL)
+add_subdirectory(dependency/GeometryTools EXCLUDE_FROM_ALL)
 include_directories(dependency/imgui)
 include_directories(dependency/glm)
 
@@ -53,14 +54,9 @@ if (WIN32)
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
 		${SRC_DIR}/planar_mesh.hpp
-		${SRC_DIR}/point.hpp
-		${SRC_DIR}/point2.hpp
 		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/stb_image_write.h
 		${SRC_DIR}/stb_image.h
-		${SRC_DIR}/triangle.hpp
-		${SRC_DIR}/triangle2.hpp
-		${SRC_DIR}/vector.hpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.h
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.cpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_opengl3.h
@@ -73,14 +69,9 @@ else()
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
 		${SRC_DIR}/planar_mesh.hpp
-		${SRC_DIR}/point.hpp
-		${SRC_DIR}/point2.hpp
 		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/stb_image_write.h
 		${SRC_DIR}/stb_image.h
-		${SRC_DIR}/triangle.hpp
-		${SRC_DIR}/triangle2.hpp
-		${SRC_DIR}/vector.hpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.h
 		${IMGUI_SRC_DIR}/backends/imgui_impl_glfw.cpp
 		${IMGUI_SRC_DIR}/backends/imgui_impl_opengl3.h
@@ -100,6 +91,7 @@ target_link_libraries(${DEMO}
 	glfw 
 	libglew_static
 	assimp
+	GeometryTools
 )
 if (!WIN32)
 	target_link_libraries(${DEMO} "stdc++fs")
