@@ -28,6 +28,7 @@ add_subdirectory(dependency/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(dependency/glew-cmake EXCLUDE_FROM_ALL)
 add_subdirectory(dependency/assimp EXCLUDE_FROM_ALL)
 add_subdirectory(dependency/GeometryTools EXCLUDE_FROM_ALL)
+include_directories(dependency/GeometryTools/code)
 include_directories(dependency/imgui)
 include_directories(dependency/glm)
 
