@@ -13,3 +13,6 @@
 [submodule "dependency/assimp"]
 	path = dependency/assimp
 	url = https://github.com/assimp/assimp
+[submodule "dependency/GeometryTools"]
+	path = dependency/GeometryTools
+	url = https://github.com/H-Schott/GeometryTools
