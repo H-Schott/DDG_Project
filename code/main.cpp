@@ -21,7 +21,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-/*
+/* LINUX
 mkdir build
 cd build
 cmake ..
