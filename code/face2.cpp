@@ -1,4 +1,4 @@
-#include "planar_mesh.hpp"
+#include "topo_mesh_base.hpp"
 
 Face2::Face2() {
     Vertex_ID[0] = 0;
@@ -40,7 +40,7 @@ Face2::Face2(uint vid1, uint vid2, uint vid3, uint fid1, uint fid2, uint fid3) {
     Face_ID[2] = fid3;
 }
 
-Triangle2 Face2::ToTriangle(const PlanarMesh* PM) const {
+Triangle2 Face2::ToTriangle(const TopoMeshBase* PM) const {
     return Triangle2(PM->Vertex(Vertex_ID[0]), PM->Vertex(Vertex_ID[1]), PM->Vertex(Vertex_ID[2]));
 }
 

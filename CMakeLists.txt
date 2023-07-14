@@ -54,7 +54,8 @@ if (WIN32)
 		${SRC_FILES}
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
-		${SRC_DIR}/planar_mesh.hpp
+		${SRC_DIR}/topo_mesh_base.hpp
+		${SRC_DIR}/topo_mesh_2D.hpp
 		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/stb_image_write.h
 		${SRC_DIR}/stb_image.h
@@ -69,7 +70,8 @@ else()
 		${SRC_FILES}
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
-		${SRC_DIR}/planar_mesh.hpp
+		${SRC_DIR}/topo_mesh_base.hpp
+		${SRC_DIR}/topo_mesh_2D.hpp
 		${SRC_DIR}/shader.hpp
 		${SRC_DIR}/stb_image_write.h
 		${SRC_DIR}/stb_image.h
