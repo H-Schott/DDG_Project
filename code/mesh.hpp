@@ -52,6 +52,7 @@ public:
     static Mesh Frame();
     static Mesh Grid(int size);
     static Mesh Grid(int size, glm::vec3 center, glm::vec3 hsize1, glm::vec3 hsize2);
+    static Mesh Sphere(int size);
 
 private:
     unsigned int VAO = 0;

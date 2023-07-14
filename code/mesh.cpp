@@ -1,5 +1,8 @@
 #include "mesh.hpp"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
     this->vertices = vertices;
     this->indices = indices;
@@ -217,6 +220,68 @@ Mesh Mesh::Grid(int size, glm::vec3 center, glm::vec3 hsize1, glm::vec3 hsize2) 
     return m;
 }
 
+
+Mesh Mesh::Sphere(int size) {
+
+    glm::vec3 white = glm::vec3(1, 1, 1);
+    std::vector<Vertex> v;
+
+    // top and bottom vertices
+    v.push_back(Vertex(glm::vec3(0., 0., -1), glm::vec3(0., 0., -1), white));
+    v.push_back(Vertex(glm::vec3(0., 0., 1),  glm::vec3(0., 0., 1),  white));
+
+    // min / max vertices
+    glm::vec3 mi{ 0, 0, 0 };
+    glm::vec3 ma{ 0, 0, 0 };
+
+    // fill other vertices
+    for (int i = 0; i < size; i++) {
+        double xy_angle = 2 * M_PI / size * i;
+        for (int j = 1; j < size; j++) {
+            double z_angle = M_PI / size * j;
+            glm::vec3 point(cos(xy_angle) * sin(z_angle), sin(xy_angle) * sin(z_angle), cos(z_angle));
+            v.push_back(Vertex(point, point, white));
+            // update min/max
+            for (int j = 0; j < 3; j++) {
+                if (point[j] > ma[j]) ma[j] = point[j];
+                if (point[j] < mi[j]) mi[j] = point[j];
+            }
+        }
+    }
+
+    // create triangles
+    std::vector<unsigned int> ids;
+    /*ids.push_back(0);
+    ids.push_back(2);
+    ids.push_back(2 + size - 1);*/
+    for (int i = 0; i < size; i++) {
+        // top triangle
+        ids.push_back(0);
+        ids.push_back(2 + size - 2 + ((i + 1) % size) * (size - 1));
+        ids.push_back(2 + size - 2 + i * (size - 1));
+        for (int j = 0; j < size - 2; j++) {
+            ids.push_back(2 + i * (size - 1) + j);
+            ids.push_back(2 + i * (size - 1) + j + 1);
+            ids.push_back(2 + ((i + 1) % size) * (size - 1) + j);
+
+            ids.push_back(2 + i * (size - 1) + j + 1);
+            ids.push_back(2 + ((i + 1) % size) * (size - 1) + j + 1);
+            ids.push_back(2 + ((i + 1) % size) * (size - 1) + j);
+        }
+        // top triangle
+        ids.push_back(1);
+        ids.push_back(2 + i * (size - 1));
+        ids.push_back(2 + ((i + 1) % size) * (size - 1));
+    }
+
+    std::vector<Texture> t;
+
+    Mesh m = Mesh(v, ids, t);
+    m.min_vertex = mi;
+    m.max_vertex = ma;
+    m.SetPrimitives(GL_TRIANGLES);
+    return m;
+}
 
 
 // EOF

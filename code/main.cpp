@@ -89,14 +89,15 @@ int main(int, char**) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    // glEnable(GL_CULL_FACE);
-    // glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     Shader object_shader = Shader("data/shaders/object.vert.glsl", "data/shaders/object.frag.glsl");
     Shader debug_shader = Shader("data/shaders/debug.vert.glsl", "data/shaders/debug.frag.glsl");
 
     Mesh mesh_frame = Mesh::Frame();
     Mesh mesh_grid = Mesh::Grid(4);
+    Mesh mesh_sphere = Mesh::Sphere(50);
     //Mesh mesh = Mesh("../ressources/splash/splash.gltf");
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
@@ -145,12 +146,13 @@ int main(int, char**) {
 
         object_shader.setVec3("lightPos", glm::vec3(0, 0, 3));
         object_shader.setVec3("cameraPos", orbiter.Position);
-        object_shader.setVec3("min_vertex", mesh.min_vertex);
-        object_shader.setVec3("max_vertex", mesh.max_vertex);
+        object_shader.setVec3("min_vertex", mesh_sphere.min_vertex);
+        object_shader.setVec3("max_vertex", mesh_sphere.max_vertex);
 
         if(wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        mesh.Draw(object_shader);
+        //mesh.Draw(object_shader);
+        mesh_sphere.Draw(object_shader);
 
         debug_shader.use();
         debug_shader.setMat4("model", model);
