@@ -54,7 +54,6 @@ if (WIN32)
 		${SRC_FILES}
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
-		${SRC_DIR}/topo_mesh_base.hpp
 		${SRC_DIR}/topo_mesh_2D.hpp
 		${SRC_DIR}/topo_mesh_3D.hpp
 		${SRC_DIR}/shader.hpp
@@ -71,7 +70,6 @@ else()
 		${SRC_FILES}
 		${SRC_DIR}/camera.hpp
 		${SRC_DIR}/mesh.hpp
-		${SRC_DIR}/topo_mesh_base.hpp
 		${SRC_DIR}/topo_mesh_2D.hpp
 		${SRC_DIR}/topo_mesh_3D.hpp
 		${SRC_DIR}/shader.hpp
