@@ -43,8 +43,8 @@ public:
 
 class TopoMeshBase {
 protected:
-    std::vector<Vertex2> vertices = {Vertex2()};  // this first vertex is the infinite vertex
-    std::vector<Face2> faces = {Face2()};
+    std::vector<Vertex2> vertices;
+    std::vector<Face2> faces;
 public:
     TopoMeshBase();
     TopoMeshBase(const char* file_name);

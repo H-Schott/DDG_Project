@@ -17,7 +17,7 @@ Mesh::Mesh(std::string path) {
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_GenNormals);
 
     if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        std::cerr << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
         return;
     }
 
@@ -54,9 +54,9 @@ void Mesh::AddAiMesh(const aiMesh* mesh, const aiScene* scene) {
         }
         
         glm::vec3 n;
-        n.x = mesh->mNormals[i].x;
+        /*n.x = mesh->mNormals[i].x;
         n.y = mesh->mNormals[i].y;
-        n.z = mesh->mNormals[i].z;
+        n.z = mesh->mNormals[i].z;*/
         //glm::vec3 c(0.8, 0.8, 0.8);
         glm::vec3 c(0.38, 0.306, 0.102);
         vertices.push_back(Vertex(p, n, c));
