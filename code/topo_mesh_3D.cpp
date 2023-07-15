@@ -14,6 +14,7 @@ TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
     faces.clear();
     
     std::unordered_map<glm::vec3, unsigned int> vertices_map;
+    std::map<std::pair<unsigned int, unsigned int>, unsigned int> edge_face_map;
 
     // process all faces
     int nb_faces = int(mesh.indices.size() / 3);
@@ -29,14 +30,37 @@ TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
                 unsigned int id = vertices_map.size();
                 vertices_map[pos] = id;
                 Point p = Point(pos.x, pos.y, pos.z);
-                Vertex3 v = Vertex3(p, faces.size());
+                Vertex3 v = Vertex3(p, i);
                 vertices.push_back(v);
             }
             vid.push_back(vertices_map[pos]);
         }
-        //std::cout << vid[0] << " " << vid[1] << " " << vid[2] << std::endl;
         Face3 f = Face3(vid, fid);
         faces.push_back(f);
+
+        // sewing step
+        for (int j = 0; j < 3; j++) {
+            std::pair<unsigned int, unsigned int> edge = std::make_pair(vid[j], vid[(j + 1) % 3]);
+            // never saw this edge yet
+            if (!edge_face_map.count(edge)) {
+                std::swap(edge.first, edge.second);
+                edge_face_map[edge] = i;
+            }
+            // already this edge, we can sew
+            else {
+                // current face
+                for (int k = 0; k < 3; k++) {
+                    if (edge.first != vid[k] && edge.second != vid[k]) faces[i].Face_ID[k] = edge_face_map[edge];
+                    break;
+                }
+                // old face
+                Face3 old_face = faces[edge_face_map[edge]];
+                for (int k = 0; k < 3; k++) {
+                    if (edge.first != old_face.Vertex_ID[k] && edge.second != old_face.Vertex_ID[k]) old_face.Face_ID[k] = i;
+                    break;
+                }
+            }
+        }
     }
     
 }

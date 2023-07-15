@@ -96,8 +96,8 @@ int main(int, char**) {
     Shader object_shader = Shader("data/shaders/object.vert.glsl", "data/shaders/object.frag.glsl");
     Shader debug_shader = Shader("data/shaders/debug.vert.glsl", "data/shaders/debug.frag.glsl");
 
-    //Mesh mesh_frame = Mesh::Frame();
-    //Mesh mesh_grid = Mesh::Grid(4);
+    Mesh mesh_frame = Mesh::Frame();
+    Mesh mesh_grid = Mesh::Grid(4);
     //Mesh mesh = Mesh("../ressources/splash/splash.gltf");
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
@@ -163,8 +163,8 @@ int main(int, char**) {
         debug_shader.setMat4("model", model);
         debug_shader.setMat4("view", view);
         debug_shader.setMat4("projection", projection);
-        //mesh_frame.Draw(debug_shader);
-        //mesh_grid.Draw(debug_shader);
+        mesh_frame.Draw(debug_shader);
+        mesh_grid.Draw(debug_shader);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
