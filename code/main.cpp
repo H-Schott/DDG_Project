@@ -16,6 +16,7 @@
 #include "shader.hpp"
 #include "camera.hpp"
 #include "mesh.hpp"
+#include "topo_mesh_3D.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -95,12 +96,18 @@ int main(int, char**) {
     Shader object_shader = Shader("data/shaders/object.vert.glsl", "data/shaders/object.frag.glsl");
     Shader debug_shader = Shader("data/shaders/debug.vert.glsl", "data/shaders/debug.frag.glsl");
 
-    Mesh mesh_frame = Mesh::Frame();
-    Mesh mesh_grid = Mesh::Grid(4);
+    //Mesh mesh_frame = Mesh::Frame();
+    //Mesh mesh_grid = Mesh::Grid(4);
     //Mesh mesh = Mesh("../ressources/splash/splash.gltf");
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
-    Mesh mesh = Mesh("data/meshs/centurion_helmet.obj");
+    Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
+    TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
+    std::cout << topo_mesh.GetNbPoint() << " points" << std::endl;
+    std::cout << topo_mesh.GetNbTriangle() << " faces" << std::endl;
+    Mesh mesh = topo_mesh.ToGlMesh();
+    //Mesh mesh = Mesh::Sphere(10);
+    //mesh.setupMesh();
     //Mesh mesh = Mesh("../ressources/minifig/lego.obj");
 
     
@@ -156,8 +163,8 @@ int main(int, char**) {
         debug_shader.setMat4("model", model);
         debug_shader.setMat4("view", view);
         debug_shader.setMat4("projection", projection);
-        mesh_frame.Draw(debug_shader);
-        mesh_grid.Draw(debug_shader);
+        //mesh_frame.Draw(debug_shader);
+        //mesh_grid.Draw(debug_shader);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

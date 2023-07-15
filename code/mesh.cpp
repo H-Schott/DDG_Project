@@ -8,6 +8,9 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     this->indices = indices;
     this->textures = textures;
 
+    //std::cout << vertices.size() << std::endl;
+    //std::cout << indices.size() / 3 << std::endl;
+
     setupMesh();
 }
 

@@ -41,7 +41,7 @@ Face3::Face3(unsigned int vid1, unsigned int vid2, unsigned int vid3, unsigned i
 }
 
 Triangle Face3::ToTriangle(const TopoMesh3D* PM) const {
-    return Triangle(PM->Vertex(Vertex_ID[0]), PM->Vertex(Vertex_ID[1]), PM->Vertex(Vertex_ID[2]));
+    return Triangle(PM->GetVertex(Vertex_ID[0]), PM->GetVertex(Vertex_ID[1]), PM->GetVertex(Vertex_ID[2]));
 }
 
 

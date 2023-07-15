@@ -55,13 +55,15 @@ public:
     unsigned int GetNbPoint() const;
     unsigned int GetNbTriangle() const;
 
-    Vertex3 Vertex(unsigned int) const;
-    Face3 Face(unsigned int) const;
+    Vertex3 GetVertex(unsigned int) const;
+    Face3 GetFace(unsigned int) const;
 
     std::vector<unsigned int> GetFacesFromVertex(unsigned int vertex_id) const; // return the list of face ID neighbouring vertex_id
     std::vector<unsigned int> GetVerticesFromVertex(unsigned int vertex_id) const; // return the list of vertex ID neighbouring vertex_id
 
     void DebugLog() const;
+
+    Mesh ToGlMesh() const;
 
 public: // pass to private once every thing is finished
     void ReOrderIDs(unsigned int face_id, unsigned int order);
