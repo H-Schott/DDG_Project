@@ -103,8 +103,8 @@ int main(int, char**) {
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
     Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
-    std::cout << topo_mesh.GetNbPoint() << " points" << std::endl;
-    std::cout << topo_mesh.GetNbTriangle() << " faces" << std::endl;
+    std::vector<unsigned int> valences = topo_mesh.GetValence();
+    for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;
     Mesh mesh = topo_mesh.ToGlMesh();
     //Mesh mesh = Mesh::Sphere(10);
     //mesh.setupMesh();

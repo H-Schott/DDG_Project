@@ -49,15 +49,14 @@ TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
             // already this edge, we can sew
             else {
                 // current face
-                for (int k = 0; k < 3; k++) {
-                    if (edge.first != vid[k] && edge.second != vid[k]) faces[i].Face_ID[k] = edge_face_map[edge];
-                    break;
-                }
+                faces[i].Face_ID[(j + 2) % 3] = edge_face_map[edge];
                 // old face
-                Face3 old_face = faces[edge_face_map[edge]];
+                Face3& old_face = faces[edge_face_map[edge]];
                 for (int k = 0; k < 3; k++) {
-                    if (edge.first != old_face.Vertex_ID[k] && edge.second != old_face.Vertex_ID[k]) old_face.Face_ID[k] = i;
-                    break;
+                    if (edge.first != old_face.Vertex_ID[k] && edge.second != old_face.Vertex_ID[k]) {
+                        old_face.Face_ID[k] = i;
+                        break;
+                    }
                 }
             }
         }
@@ -254,7 +253,7 @@ std::vector<unsigned int> TopoMesh3D::GetVerticesFromVertex(unsigned int vertex_
     }
 
     // premier sommet
-    i_sommet_relativ = (i_sommet_relativ + 1)%3;
+    i_sommet_relativ = (i_sommet_relativ + 1) % 3;
     unsigned int i_begin_sommet = faces[i_begin_face].Vertex_ID[i_sommet_relativ];
     unsigned int i_current_sommet = i_begin_sommet;
     unsigned int i_current_face = i_begin_face;
@@ -278,6 +277,21 @@ std::vector<unsigned int> TopoMesh3D::GetVerticesFromVertex(unsigned int vertex_
     return all_neighbours;
 }
 
+std::vector<unsigned int> TopoMesh3D::GetValence() const {
+    std::vector<unsigned int> valences;
+
+    //for (int i = 0; i < 0; i++) {
+    for (int i = 0; i < vertices.size(); i++) {
+        std::vector<unsigned int> val_v = GetVerticesFromVertex(i);
+        unsigned int val = val_v.size();
+        while (val >= valences.size()) {
+            valences.push_back(0);
+        }
+        valences[val] += 1;
+    }
+
+    return valences;
+}
 
 
 void TopoMesh3D::DebugLog() const {
@@ -285,12 +299,14 @@ void TopoMesh3D::DebugLog() const {
     unsigned int nb_faces = faces.size();
 
     std::cout << nb_vertices << " vertices.\n";
-    for (unsigned int i = 0; i < nb_vertices; i++) {
+    //for (unsigned int i = 0; i < nb_vertices; i++) {
+    for (unsigned int i = 0; i < 100; i++) {
         std::cout << i << " : " << vertices[i] << " : " << vertices[i].Face_ID << std::endl;
     }
 
     std::cout << nb_faces << " faces.\n";
-    for (unsigned int i = 0; i < nb_faces; i++) {
+    //for (unsigned int i = 0; i < nb_faces; i++) {
+    for (unsigned int i = 0; i < 100; i++) {
         std::cout << i << " : ";
         std::cout << faces[i].Vertex_ID[0] << " " << faces[i].Vertex_ID[1] << " " << faces[i].Vertex_ID[2] << " : ";
         std::cout << faces[i].Face_ID[0] << " " << faces[i].Face_ID[1] << " " << faces[i].Face_ID[2] << std::endl;

@@ -60,6 +60,8 @@ public:
 
     std::vector<unsigned int> GetFacesFromVertex(unsigned int vertex_id) const; // return the list of face ID neighbouring vertex_id
     std::vector<unsigned int> GetVerticesFromVertex(unsigned int vertex_id) const; // return the list of vertex ID neighbouring vertex_id
+    std::vector<unsigned int> GetValence() const; // res[i] = #vertices_with_i_neighbors
+
 
     void DebugLog() const;
 
