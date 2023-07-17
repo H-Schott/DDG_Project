@@ -464,14 +464,13 @@ Mesh TopoMesh3D::ToGlMesh() const {
     glm::vec3 mi{ 0, 0, 0 };
     glm::vec3 ma{ 0, 0, 0 };
 
-    glm::vec3 color(0.7, 0.2, 0.1);
+    glm::vec3 color(0.38, 0.306, 0.102);
 
-    for (int i = 0; i < vertices.size(); i++) {
+    /*for (int i = 0; i < vertices.size(); i++) {
         glm::vec3 p(vertices[i].x, vertices[i].y, vertices[i].z);
         Vector normal = faces[vertices[i].Face_ID].ToTriangle(this).Normal();
         Vertex v = Vertex(p, glm::vec3(normal.x, normal.y,normal.z), color);
         ve.push_back(v);
-
 
         for (int j = 0; j < 3; j++) {
             if (p[j] > ma[j]) ma[j] = p[j];
@@ -483,6 +482,44 @@ Mesh TopoMesh3D::ToGlMesh() const {
         id.push_back(faces[i].Vertex_ID[0]);
         id.push_back(faces[i].Vertex_ID[1]);
         id.push_back(faces[i].Vertex_ID[2]);
+    }*/
+
+    for (int i = 0; i < vertices.size(); i++) {
+        glm::vec3 p(vertices[i].x, vertices[i].y, vertices[i].z);
+
+        for (int j = 0; j < 3; j++) {
+            if (p[j] > ma[j]) ma[j] = p[j];
+            if (p[j] < mi[j]) mi[j] = p[j];
+        }
+    }
+
+    for (int i = 0; i < faces.size(); i++) {
+        Vertex3 tv;
+        glm::vec3 p;
+        Vector normal;
+
+        tv = vertices[faces[i].Vertex_ID[0]];
+        p = glm::vec3(tv.x, tv.y, tv.z);
+        normal = faces[i].ToTriangle(this).Normal();
+        Vertex v0 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), color, glm::vec3(1, 0, 0));
+
+        tv = vertices[faces[i].Vertex_ID[1]];
+        p = glm::vec3(tv.x, tv.y, tv.z);
+        normal = faces[i].ToTriangle(this).Normal();
+        Vertex v1 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), color, glm::vec3(0, 1, 0));
+
+        tv = vertices[faces[i].Vertex_ID[2]];
+        p = glm::vec3(tv.x, tv.y, tv.z);
+        normal = faces[i].ToTriangle(this).Normal();
+        Vertex v2 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), color, glm::vec3(0, 0, 1));
+        
+        ve.push_back(v0);
+        ve.push_back(v1);
+        ve.push_back(v2);
+
+        id.push_back(3 * i);
+        id.push_back(3 * i + 1);
+        id.push_back(3 * i + 2);
     }
 
     Mesh m = Mesh(ve, id, tx);

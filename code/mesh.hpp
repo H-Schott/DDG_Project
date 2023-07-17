@@ -16,10 +16,14 @@ struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
     glm::vec3 Color;
+    glm::vec3 Bary;
     //glm::vec2 TexCoords;
 
     Vertex(glm::vec3 P, glm::vec3 N, glm::vec3 C) :
-        Position(P), Normal(N), Color(C) {}
+        Position(P), Normal(N), Color(C), Bary(glm::vec3(1, 0, 0)) {}
+
+    Vertex(glm::vec3 P, glm::vec3 N, glm::vec3 C, glm::vec3 B) :
+        Position(P), Normal(N), Color(C), Bary(B) {}
 };
 
 struct Texture {

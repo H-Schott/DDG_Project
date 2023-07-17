@@ -4,6 +4,7 @@ in vec3 vertexPos;
 in vec3 vertexNormal;
 in vec3 vertexColor;
 in vec2 vertexTexCoords;
+in vec3 vertexBary;
 
 out vec4 FragColor;
 
@@ -12,10 +13,17 @@ uniform vec3 lightPos;
 uniform vec4 uniformColor;
 uniform sampler2D uniformTexture;
 
+float lineWidth = 0.5;
+
 void main() {
 
-    // FragColor = vec4(vertexColor, 1.0);
-    // return;
+    vec3 d = fwidth(vertexBary);
+    vec3 f = step(d * lineWidth, vertexBary);
+
+    if (min(min(f.x, f.y), f.z) < 0.5) {
+        FragColor = vec4(vec3(0.1), 1.);
+        return;
+    }
 
     vec3 norm = normalize(vertexNormal);
     vec3 lightDir = normalize(lightPos - vertexPos);
