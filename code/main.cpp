@@ -90,8 +90,8 @@ int main(int, char**) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
     Shader object_shader = Shader("data/shaders/object.vert.glsl", "data/shaders/object.frag.glsl");
     Shader debug_shader = Shader("data/shaders/debug.vert.glsl", "data/shaders/debug.frag.glsl");
@@ -101,10 +101,13 @@ int main(int, char**) {
     //Mesh mesh = Mesh("../ressources/splash/splash.gltf");
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
-    Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
+    //Mesh mesh = Mesh("data/meshs/centurion_helmet.obj");
+    Mesh mesh_1 = Mesh("data/meshs/bunny.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
-    std::vector<unsigned int> valences = topo_mesh.GetValence();
-    for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;
+    std::cout << "topo mesh built" << std::endl;
+    //topo_mesh.DebugLog();
+    //std::vector<unsigned int> valences = topo_mesh.GetValence();
+    //for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;
     Mesh mesh = topo_mesh.ToGlMesh();
     //Mesh mesh = Mesh::Sphere(10);
     //mesh.setupMesh();

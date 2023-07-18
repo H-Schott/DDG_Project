@@ -19,6 +19,7 @@ TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
     // process all faces
     int nb_faces = int(mesh.indices.size() / 3);
     for (int i = 0; i < nb_faces; i++) {
+        
         std::vector<unsigned int> vid;
         std::vector<unsigned int> fid = {0, 0, 0};
         
@@ -252,6 +253,8 @@ std::vector<unsigned int> TopoMesh3D::GetVerticesFromVertex(unsigned int vertex_
         }
     }
 
+    //std::cout << i_sommet_relativ << std::endl;
+
     // premier sommet
     i_sommet_relativ = (i_sommet_relativ + 1) % 3;
     unsigned int i_begin_sommet = faces[i_begin_face].Vertex_ID[i_sommet_relativ];
@@ -272,6 +275,7 @@ std::vector<unsigned int> TopoMesh3D::GetVerticesFromVertex(unsigned int vertex_
             }
         }
 
+        //std::cout << i_sommet_relativ << std::endl;
     }while(i_begin_sommet != i_current_sommet);  // on stop si on revient au i_begin_somet
 
     return all_neighbours;
@@ -279,6 +283,8 @@ std::vector<unsigned int> TopoMesh3D::GetVerticesFromVertex(unsigned int vertex_
 
 std::vector<unsigned int> TopoMesh3D::GetValence() const {
     std::vector<unsigned int> valences;
+
+    //std::vector<unsigned int> val_v = GetVerticesFromVertex(7855);
 
     //for (int i = 0; i < 0; i++) {
     for (int i = 0; i < vertices.size(); i++) {
