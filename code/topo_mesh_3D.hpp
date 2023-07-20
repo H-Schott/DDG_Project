@@ -62,6 +62,9 @@ public:
     std::vector<unsigned int> GetVerticesFromVertex(unsigned int vertex_id) const; // return the list of vertex ID neighbouring vertex_id
     std::vector<unsigned int> GetValence() const; // res[i] = #vertices_with_i_neighbors
 
+    double Laplacian(unsigned int vertex_id, unsigned int component_id) const;
+    glm::vec3 Laplacian(unsigned int vertex_id) const;
+
 
     void DebugLog() const;
 

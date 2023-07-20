@@ -11,7 +11,9 @@
 
 TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
     vertices.clear();
+    vertices.push_back(Vertex3()); //  dummy vertex
     faces.clear();
+    faces.push_back(Face3());  // dummy face
     
     std::unordered_map<glm::vec3, unsigned int> vertices_map;
     std::map<std::pair<unsigned int, unsigned int>, unsigned int> edge_face_map;
@@ -28,10 +30,10 @@ TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
             glm::vec3 pos = mesh.vertices[mesh.indices[3 * i + j]].Position;
             // check if vertice j has never been seen
             if (!vertices_map.count(pos)) {
-                unsigned int id = vertices_map.size();
+                unsigned int id = vertices_map.size() + 1;
                 vertices_map[pos] = id;
                 Point p = Point(pos.x, pos.y, pos.z);
-                Vertex3 v = Vertex3(p, i);
+                Vertex3 v = Vertex3(p, faces.size());
                 vertices.push_back(v);
             }
             vid.push_back(vertices_map[pos]);
@@ -45,17 +47,17 @@ TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
             // never saw this edge yet
             if (!edge_face_map.count(edge)) {
                 std::swap(edge.first, edge.second);
-                edge_face_map[edge] = i;
+                edge_face_map[edge] = faces.size() - 1;
             }
             // already this edge, we can sew
             else {
                 // current face
-                faces[i].Face_ID[(j + 2) % 3] = edge_face_map[edge];
+                faces[faces.size() - 1].Face_ID[(j + 2) % 3] = edge_face_map[edge];
                 // old face
                 Face3& old_face = faces[edge_face_map[edge]];
                 for (int k = 0; k < 3; k++) {
                     if (edge.first != old_face.Vertex_ID[k] && edge.second != old_face.Vertex_ID[k]) {
-                        old_face.Face_ID[k] = i;
+                        old_face.Face_ID[k] = faces.size() - 1;
                         break;
                     }
                 }
@@ -215,6 +217,10 @@ std::vector<unsigned int> TopoMesh3D::GetFacesFromVertex(unsigned int vertex_id)
         neighbour_faces.push_back(current_face_id);
         previous_face_id = current_face_id;
         current_face_id = faces[previous_face_id].Face_ID[relativ_vertex_id];
+        if (current_face_id == 0) {
+            neighbour_faces.clear();
+            return neighbour_faces;
+        }
         relativ_vertex_id = (relativ_vertex_id + 1) % 3;
         current_vertex_id = faces[previous_face_id].Vertex_ID[relativ_vertex_id];
 
@@ -266,6 +272,10 @@ std::vector<unsigned int> TopoMesh3D::GetVerticesFromVertex(unsigned int vertex_
         all_neighbours.push_back(i_current_sommet);
         i_precedent_face = i_current_face;
         i_current_face = faces[i_precedent_face].Face_ID[i_sommet_relativ];
+        if (i_current_face == 0) {
+            all_neighbours.clear();
+            return all_neighbours;
+        }
         i_sommet_relativ = (i_sommet_relativ + 1) % 3;
         i_current_sommet = faces[i_precedent_face].Vertex_ID[i_sommet_relativ];
         i_sommet_relativ = 4;
@@ -297,6 +307,67 @@ std::vector<unsigned int> TopoMesh3D::GetValence() const {
     }
 
     return valences;
+}
+
+double TopoMesh3D::Laplacian(unsigned int vertex_id, unsigned int component_id) const {
+    double laplacian = 0;
+
+    std::vector<unsigned int> n_v_ids = GetVerticesFromVertex(vertex_id);
+
+    // laplacian vars
+    double du;
+    double cot_alpha;
+    double cot_beta;
+    double A_i = 0;
+
+    unsigned int i_alpha_sommet;
+    unsigned int i_beta_sommet;
+    unsigned int i_j_sommet;
+
+    // on parcourt les sommets voisins
+    for (unsigned int j = 0; j < n_v_ids.size(); j++) {
+        i_j_sommet = n_v_ids[j];
+        i_alpha_sommet = n_v_ids[(j + n_v_ids.size() - 1) % n_v_ids.size()];
+        i_beta_sommet = n_v_ids[(j + 1) % n_v_ids.size()];
+
+        // du
+        switch (component_id) {
+        case 0:
+            du = vertices[i_j_sommet].x - vertices[vertex_id].x;
+            break;
+        case 1:
+            du = vertices[i_j_sommet].y - vertices[vertex_id].y;
+            break;
+        case 2:
+            du = vertices[i_j_sommet].z - vertices[vertex_id].z;
+            break;
+        }
+
+        // cot_alpha
+        cot_alpha = CoTan(vertices[vertex_id], vertices[i_alpha_sommet], vertices[i_j_sommet]);
+
+        // cot_beta
+        cot_beta = CoTan(vertices[vertex_id], vertices[i_beta_sommet], vertices[i_j_sommet]);
+
+        laplacian += (cot_beta + cot_alpha) * du;
+
+    }
+
+    // calcul de A_i
+
+    std::vector<unsigned int> i_neighbours_face = GetFacesFromVertex(vertex_id);
+
+    for (unsigned int& i : i_neighbours_face) {
+        A_i += faces[i].ToTriangle(this).Area();
+    }
+
+    laplacian = 3. / (2. * A_i) * laplacian;
+
+    return laplacian;
+}
+
+glm::vec3 TopoMesh3D::Laplacian(unsigned int vertex_id) const {
+    return glm::vec3(Laplacian(vertex_id, 0), Laplacian(vertex_id, 1), Laplacian(vertex_id, 2));
 }
 
 
@@ -471,6 +542,7 @@ Mesh TopoMesh3D::ToGlMesh() const {
     glm::vec3 ma{ 0, 0, 0 };
 
     glm::vec3 color(0.38, 0.306, 0.102);
+    glm::vec3 color_red(1., 0., 0.);
 
     /*for (int i = 0; i < vertices.size(); i++) {
         glm::vec3 p(vertices[i].x, vertices[i].y, vertices[i].z);
@@ -490,7 +562,7 @@ Mesh TopoMesh3D::ToGlMesh() const {
         id.push_back(faces[i].Vertex_ID[2]);
     }*/
 
-    for (int i = 0; i < vertices.size(); i++) {
+    for (int i = 1; i < vertices.size(); i++) {
         glm::vec3 p(vertices[i].x, vertices[i].y, vertices[i].z);
 
         for (int j = 0; j < 3; j++) {
@@ -499,33 +571,40 @@ Mesh TopoMesh3D::ToGlMesh() const {
         }
     }
 
-    for (int i = 0; i < faces.size(); i++) {
+    for (int i = 1; i < faces.size(); i++) {
         Vertex3 tv;
         glm::vec3 p;
         Vector normal;
+        glm::vec3 c = color;
 
+        if (GetVerticesFromVertex(faces[i].Vertex_ID[0]).size() == 0) c = color_red;
         tv = vertices[faces[i].Vertex_ID[0]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();
-        Vertex v0 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), color, glm::vec3(1, 0, 0));
+        Vertex v0 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), c, glm::vec3(1, 0, 0));
+        c = color;
 
+        if (GetVerticesFromVertex(faces[i].Vertex_ID[1]).size() == 0) c = color_red;
         tv = vertices[faces[i].Vertex_ID[1]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();
-        Vertex v1 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), color, glm::vec3(0, 1, 0));
+        Vertex v1 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), c, glm::vec3(0, 1, 0));
+        c = color;
 
+        if (GetVerticesFromVertex(faces[i].Vertex_ID[2]).size() == 0) c = color_red;
         tv = vertices[faces[i].Vertex_ID[2]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();
-        Vertex v2 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), color, glm::vec3(0, 0, 1));
+        Vertex v2 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), c, glm::vec3(0, 0, 1));
+        c = color;
         
         ve.push_back(v0);
         ve.push_back(v1);
         ve.push_back(v2);
 
-        id.push_back(3 * i);
-        id.push_back(3 * i + 1);
-        id.push_back(3 * i + 2);
+        id.push_back(3 * (i - 1));
+        id.push_back(3 * (i - 1) + 1);
+        id.push_back(3 * (i - 1) + 2);
     }
 
     Mesh m = Mesh(ve, id, tx);

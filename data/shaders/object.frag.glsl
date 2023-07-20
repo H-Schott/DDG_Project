@@ -37,6 +37,7 @@ void main() {
 
     //vec3 base_color = vec3(0.8, 0.4, 0.1);
     vec3 base_color = vertexColor;
-    FragColor = (ambient + diff + spec) * vec4(base_color, 1.0);//texture(uniformTexture, vertexTexCoords);
+    FragColor = vec4(base_color, 1.0);
+    //FragColor = (ambient + diff + spec) * vec4(base_color, 1.0);//texture(uniformTexture, vertexTexCoords);
     //FragColor = vec4(norm, 1.0);
 };
