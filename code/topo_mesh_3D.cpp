@@ -313,6 +313,7 @@ double TopoMesh3D::Laplacian(unsigned int vertex_id, unsigned int component_id) 
     double laplacian = 0;
 
     std::vector<unsigned int> n_v_ids = GetVerticesFromVertex(vertex_id);
+    if (n_v_ids.size() == 0) return 0.;
 
     // laplacian vars
     double du;
@@ -366,8 +367,39 @@ double TopoMesh3D::Laplacian(unsigned int vertex_id, unsigned int component_id) 
     return laplacian;
 }
 
-glm::vec3 TopoMesh3D::Laplacian(unsigned int vertex_id) const {
-    return glm::vec3(Laplacian(vertex_id, 0), Laplacian(vertex_id, 1), Laplacian(vertex_id, 2));
+Vector TopoMesh3D::Laplacian(unsigned int vertex_id) const {
+    return Vector(Laplacian(vertex_id, 0), Laplacian(vertex_id, 1), Laplacian(vertex_id, 2));
+}
+
+std::vector<double> TopoMesh3D::LaplacianNorms(bool normalized) const {
+    std::vector<double> laps;
+    double max_lap = 0.;
+    for (int i = 1; i < vertices.size(); i++) {
+        Vector lap = Laplacian(i);
+        double lap_n = lap.Norm();
+        laps.push_back(lap_n);
+        if (lap_n > max_lap) max_lap = lap_n;
+    }
+
+    if (normalized && max_lap > 0.) {
+        for (int i = 0; i < laps.size(); i++) {
+            laps[i] = laps[i] / max_lap;
+        }
+    }
+
+    return laps;
+}
+
+std::vector<Vector> TopoMesh3D::Laplacians(bool normalized) const {
+    std::vector<Vector> laps;
+
+    for (int i = 1; i < vertices.size(); i++) {
+        Vector lap = Laplacian(i);
+        if (normalized) laps.push_back(lap.Normalized());
+        else laps.push_back(lap);
+    }
+
+    return laps;
 }
 
 
@@ -542,12 +574,13 @@ Mesh TopoMesh3D::ToGlMesh() const {
     glm::vec3 ma{ 0, 0, 0 };
 
     glm::vec3 color(0.38, 0.306, 0.102);
-    glm::vec3 color_red(1., 0., 0.);
 
-    /*for (int i = 0; i < vertices.size(); i++) {
+    for (int i = 1; i < vertices.size(); i++) {
         glm::vec3 p(vertices[i].x, vertices[i].y, vertices[i].z);
         Vector normal = faces[vertices[i].Face_ID].ToTriangle(this).Normal();
-        Vertex v = Vertex(p, glm::vec3(normal.x, normal.y,normal.z), color);
+        Vector lap = Laplacian(i).Normalized();
+        glm::vec3 c(std::abs(lap.x), std::abs(lap.y), std::abs(lap.z));
+        Vertex v = Vertex(p, glm::vec3(normal.x, normal.y,normal.z), c);
         ve.push_back(v);
 
         for (int j = 0; j < 3; j++) {
@@ -556,11 +589,29 @@ Mesh TopoMesh3D::ToGlMesh() const {
         }
     }
 
-    for (int i = 0; i < faces.size(); i++) {
-        id.push_back(faces[i].Vertex_ID[0]);
-        id.push_back(faces[i].Vertex_ID[1]);
-        id.push_back(faces[i].Vertex_ID[2]);
-    }*/
+    for (int i = 1; i < faces.size(); i++) {
+        id.push_back(faces[i].Vertex_ID[0] - 1);
+        id.push_back(faces[i].Vertex_ID[1] - 1);
+        id.push_back(faces[i].Vertex_ID[2] - 1);
+    }
+
+    Mesh m = Mesh(ve, id, tx);
+    m.min_vertex = mi;
+    m.max_vertex = ma;
+    m.SetPrimitives(GL_TRIANGLES);
+    return m;
+}
+
+Mesh TopoMesh3D::ToGlMesh_3() const {
+    std::vector<Vertex> ve;
+    std::vector<unsigned int> id;
+    std::vector<Texture> tx;
+
+    glm::vec3 mi{ 0, 0, 0 };
+    glm::vec3 ma{ 0, 0, 0 };
+
+    glm::vec3 color(0.38, 0.306, 0.102);
+    glm::vec3 color_red(1., 0., 0.);
 
     for (int i = 1; i < vertices.size(); i++) {
         glm::vec3 p(vertices[i].x, vertices[i].y, vertices[i].z);
@@ -578,6 +629,7 @@ Mesh TopoMesh3D::ToGlMesh() const {
         glm::vec3 c = color;
 
         if (GetVerticesFromVertex(faces[i].Vertex_ID[0]).size() == 0) c = color_red;
+        else c = glm::vec3(Laplacian(faces[i].Vertex_ID[0]).Norm() / 4.);
         tv = vertices[faces[i].Vertex_ID[0]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();
@@ -585,6 +637,7 @@ Mesh TopoMesh3D::ToGlMesh() const {
         c = color;
 
         if (GetVerticesFromVertex(faces[i].Vertex_ID[1]).size() == 0) c = color_red;
+        else c = glm::vec3(Laplacian(faces[i].Vertex_ID[1]).Norm() / 4.);
         tv = vertices[faces[i].Vertex_ID[1]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();
@@ -592,6 +645,7 @@ Mesh TopoMesh3D::ToGlMesh() const {
         c = color;
 
         if (GetVerticesFromVertex(faces[i].Vertex_ID[2]).size() == 0) c = color_red;
+        else c = glm::vec3(Laplacian(faces[i].Vertex_ID[2]).Norm() / 4.);
         tv = vertices[faces[i].Vertex_ID[2]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();

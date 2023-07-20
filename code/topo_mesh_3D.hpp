@@ -63,11 +63,14 @@ public:
     std::vector<unsigned int> GetValence() const; // res[i] = #vertices_with_i_neighbors
 
     double Laplacian(unsigned int vertex_id, unsigned int component_id) const;
-    glm::vec3 Laplacian(unsigned int vertex_id) const;
+    Vector Laplacian(unsigned int vertex_id) const;
+    std::vector<double> LaplacianNorms(bool normalized = true) const;
+    std::vector<Vector> Laplacians(bool normalized = true) const;
 
 
     void DebugLog() const;
 
+    Mesh ToGlMesh_3() const;
     Mesh ToGlMesh() const;
 
 public: // pass to private once every thing is finished

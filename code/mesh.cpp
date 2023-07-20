@@ -139,6 +139,19 @@ void Mesh::SetPrimitives(GLenum prim) {
 }
 
 
+void Mesh::SetColor(unsigned int vertex_id, glm::vec3 color) {
+    if (vertex_id >= vertices.size()) return;
+    vertices[vertex_id].Color = color;
+}
+
+
+void Mesh::SetColors(std::vector<glm::vec3> colors) {
+    for (int i = 0; i < colors.size(); i++) {
+        SetColor(i, colors[i]);
+    }
+}
+
+
 void Mesh::Draw(Shader& shader) {
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;

@@ -49,6 +49,8 @@ public:
     void Center();
     void Scale(double coeff);
     void SetPrimitives(GLenum prim);
+    void SetColor(unsigned int vertex_id, glm::vec3 color);
+    void SetColors(std::vector<glm::vec3> colors);
     
     void setupMesh();
     void Draw(Shader& shader);

@@ -101,17 +101,18 @@ int main(int, char**) {
     //Mesh mesh = Mesh("../ressources/splash/splash.gltf");
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
-    //Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
-    Mesh mesh_1 = Mesh("data/meshs/bunny.obj");
+    Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
+    //Mesh mesh_1 = Mesh("data/meshs/bunny.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
 
     std::vector<unsigned int> valences = topo_mesh.GetValence();
     for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;
 
+
+    //topo_mesh.PrintLaplacian();
+
     Mesh mesh = topo_mesh.ToGlMesh();
-    //Mesh mesh = Mesh::Sphere(10);
-    //mesh.setupMesh();
-    //Mesh mesh = Mesh("../ressources/minifig/lego.obj");
+
 
     
     glm::mat4 model = glm::mat4(1.0f);
@@ -166,8 +167,8 @@ int main(int, char**) {
         debug_shader.setMat4("model", model);
         debug_shader.setMat4("view", view);
         debug_shader.setMat4("projection", projection);
-        mesh_frame.Draw(debug_shader);
-        mesh_grid.Draw(debug_shader);
+        //mesh_frame.Draw(debug_shader);
+        //mesh_grid.Draw(debug_shader);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

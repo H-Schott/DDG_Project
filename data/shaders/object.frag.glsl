@@ -13,7 +13,7 @@ uniform vec3 lightPos;
 uniform vec4 uniformColor;
 uniform sampler2D uniformTexture;
 
-float lineWidth = 0.5;
+float lineWidth = 0.;//0.5;
 
 void main() {
 
