@@ -105,13 +105,14 @@ int main(int, char**) {
     //Mesh mesh_1 = Mesh("data/meshs/bunny.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
 
-    std::vector<unsigned int> valences = topo_mesh.GetValence();
-    for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;
+    /*std::vector<unsigned int> valences = topo_mesh.GetValence();
+    for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;*/
 
-
-    //topo_mesh.PrintLaplacian();
 
     Mesh mesh = topo_mesh.ToGlMesh();
+    mesh.SetColors(topo_mesh.LaplacianNorms());
+    //mesh.SetColors(topo_mesh.Laplacians());
+    mesh.setupMesh();
 
 
     

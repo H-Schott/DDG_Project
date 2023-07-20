@@ -373,19 +373,25 @@ Vector TopoMesh3D::Laplacian(unsigned int vertex_id) const {
 
 std::vector<double> TopoMesh3D::LaplacianNorms(bool normalized) const {
     std::vector<double> laps;
+    double min_lap = Laplacian(1).Norm();
     double max_lap = 0.;
     for (int i = 1; i < vertices.size(); i++) {
         Vector lap = Laplacian(i);
         double lap_n = lap.Norm();
         laps.push_back(lap_n);
+        if (lap_n < min_lap) min_lap = lap_n;
         if (lap_n > max_lap) max_lap = lap_n;
     }
 
+    max_lap *= 0.3;
+
     if (normalized && max_lap > 0.) {
         for (int i = 0; i < laps.size(); i++) {
-            laps[i] = laps[i] / max_lap;
+            laps[i] = (laps[i] - min_lap) / (max_lap - min_lap);
         }
     }
+
+    std::cout << min_lap << " " << max_lap << std::endl;
 
     return laps;
 }
@@ -580,6 +586,7 @@ Mesh TopoMesh3D::ToGlMesh() const {
         Vector normal = faces[vertices[i].Face_ID].ToTriangle(this).Normal();
         Vector lap = Laplacian(i).Normalized();
         glm::vec3 c(std::abs(lap.x), std::abs(lap.y), std::abs(lap.z));
+        c = color;
         Vertex v = Vertex(p, glm::vec3(normal.x, normal.y,normal.z), c);
         ve.push_back(v);
 

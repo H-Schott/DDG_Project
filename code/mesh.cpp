@@ -141,11 +141,45 @@ void Mesh::SetPrimitives(GLenum prim) {
 
 void Mesh::SetColor(unsigned int vertex_id, glm::vec3 color) {
     if (vertex_id >= vertices.size()) return;
-    vertices[vertex_id].Color = color;
+    vertices[vertex_id].Color = glm::vec3(std::abs(color.x), std::abs(color.y), std::abs(color.z));
 }
 
 
 void Mesh::SetColors(std::vector<glm::vec3> colors) {
+    for (int i = 0; i < colors.size(); i++) {
+        SetColor(i, colors[i]);
+    }
+}
+
+void Mesh::SetColors(std::vector<Vector> colors) {
+    for (int i = 0; i < colors.size(); i++) {
+        SetColor(i, glm::vec3(colors[i].x, colors[i].y, colors[i].z));
+    }
+}
+
+void Mesh::SetColor(unsigned int vertex_id, double scalar) {
+    // double to color
+    scalar = 1 - std::pow(scalar, 0.4);
+    glm::vec3 color(0., 0., 0.);
+    if (scalar <= 0.5) {
+        scalar *= 2.0;
+        color.x = 1.0 - scalar;
+        color.y = scalar;
+    }
+    else {
+        scalar = scalar * 2.0 - 1.0;
+        color.y = 1.0 - scalar;
+        color.z = scalar;
+    }
+
+    //color = glm::vec3(scalar, scalar, scalar);
+
+    // apply color
+    SetColor(vertex_id, color);
+}
+
+
+void Mesh::SetColors(std::vector<double> colors) {
     for (int i = 0; i < colors.size(); i++) {
         SetColor(i, colors[i]);
     }

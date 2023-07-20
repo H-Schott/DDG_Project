@@ -11,6 +11,7 @@
 #include <assimp/postprocess.h>
 
 #include "shader.hpp"
+#include "vector.hpp"
 
 struct Vertex {
     glm::vec3 Position;
@@ -51,6 +52,9 @@ public:
     void SetPrimitives(GLenum prim);
     void SetColor(unsigned int vertex_id, glm::vec3 color);
     void SetColors(std::vector<glm::vec3> colors);
+    void SetColors(std::vector<Vector> colors);
+    void SetColor(unsigned int vertex_id, double scalar);
+    void SetColors(std::vector<double> colors);
     
     void setupMesh();
     void Draw(Shader& shader);
