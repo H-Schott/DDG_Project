@@ -576,8 +576,8 @@ Mesh TopoMesh3D::ToGlMesh() const {
     std::vector<unsigned int> id;
     std::vector<Texture> tx;
 
-    glm::vec3 mi{ 0, 0, 0 };
-    glm::vec3 ma{ 0, 0, 0 };
+    glm::vec3 mi(vertices[1].x, vertices[1].y, vertices[1].z);
+    glm::vec3 ma(vertices[1].x, vertices[1].y, vertices[1].z);
 
     glm::vec3 color(0.38, 0.306, 0.102);
 

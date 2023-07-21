@@ -31,6 +31,7 @@ add_subdirectory(dependency/GeometryTools EXCLUDE_FROM_ALL)
 include_directories(dependency/GeometryTools/code)
 include_directories(dependency/imgui)
 include_directories(dependency/glm)
+include_directories(dependency/eigen)
 
 # imgui source files
 set(IMGUI_SRC_DIR dependency/imgui)
