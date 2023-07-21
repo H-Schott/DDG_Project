@@ -16,3 +16,6 @@
 [submodule "dependency/GeometryTools"]
 	path = dependency/GeometryTools
 	url = https://github.com/H-Schott/GeometryTools
+[submodule "dependency/eigen"]
+	path = dependency/eigen
+	url = https://github.com/eigenteam/eigen-git-mirror
