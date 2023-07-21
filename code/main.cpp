@@ -107,8 +107,9 @@ int main(int, char**) {
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
     //Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
-    Mesh mesh_1 = Mesh("data/meshs/face.obj");
+    Mesh mesh_1 = Mesh("data/meshs/penix.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
+
 
     /*std::vector<unsigned int> valences = topo_mesh.GetValence();
     for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;*/
@@ -117,7 +118,6 @@ int main(int, char**) {
     mesh.SetColors(topo_mesh.LaplacianNorms());
     //mesh.SetColors(topo_mesh.Laplacians());
     mesh.setupMesh();
-
 
     
     glm::mat4 model = glm::mat4(1.0f);
