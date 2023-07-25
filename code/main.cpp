@@ -114,14 +114,14 @@ int main(int, char**) {
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
     //Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
-    Mesh mesh = Mesh("data/meshs/lucy.ply");
-    //TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
+    Mesh mesh_1 = Mesh("data/meshs/face.obj");
+    TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
 
 
     /*std::vector<unsigned int> valences = topo_mesh.GetValence();
     for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;*/
 
-    //Mesh mesh = topo_mesh.ToGlMesh();
+    Mesh mesh = topo_mesh.ToGlMesh_3();
     //mesh.SetColors(topo_mesh.LaplacianNorms());
     //mesh.SetColors(topo_mesh.Laplacians());
     //mesh.setupMesh();
@@ -132,7 +132,8 @@ int main(int, char**) {
 
     bool color_change = false;
     float triangle_color[4] = { 0.38, 0.306, 0.102, 1. };
-    float wire_color[4] = { 1., 1., 1., 1. };
+    float wire_color[4] = { 0.53, 0.53, 0.53, 1. };
+    float wire_width = 0.5;
 
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -155,6 +156,7 @@ int main(int, char**) {
         ImGui::Checkbox(" WireFrame", &wireframe);
         color_change |= ImGui::ColorEdit3("Triangles", (float*)&triangle_color);
         color_change |= ImGui::ColorEdit3("WireFrame", (float*)&wire_color);
+        ImGui::SliderFloat("Wire width", (float*)&wire_width, 0., 4.);
         ImGui::End();
 
         
@@ -183,6 +185,9 @@ int main(int, char**) {
         object_shader.setMat4("projection", projection);
 
         object_shader.setVec3("uniformWireColor", glm::vec3(wire_color[0], wire_color[1], wire_color[2]));
+        object_shader.setFloat("uniformWireWidth", wire_width);
+
+
         object_shader.setVec3("lightPos", glm::vec3(0, 0, 3));
         object_shader.setVec3("cameraPos", orbiter.Position);
         object_shader.setVec3("min_vertex", mesh.min_vertex);
@@ -231,6 +236,8 @@ void processInput(GLFWwindow *window) {
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (ImGui::GetIO().WantCaptureMouse) return;
+
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;

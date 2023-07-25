@@ -614,8 +614,8 @@ Mesh TopoMesh3D::ToGlMesh_3() const {
     std::vector<unsigned int> id;
     std::vector<Texture> tx;
 
-    glm::vec3 mi{ 0, 0, 0 };
-    glm::vec3 ma{ 0, 0, 0 };
+    glm::vec3 mi(vertices[1].x, vertices[1].y, vertices[1].z);
+    glm::vec3 ma(vertices[1].x, vertices[1].y, vertices[1].z);
 
     glm::vec3 color(0.38, 0.306, 0.102);
     glm::vec3 color_red(1., 0., 0.);
@@ -635,24 +635,18 @@ Mesh TopoMesh3D::ToGlMesh_3() const {
         Vector normal;
         glm::vec3 c = color;
 
-        if (GetVerticesFromVertex(faces[i].Vertex_ID[0]).size() == 0) c = color_red;
-        else c = glm::vec3(Laplacian(faces[i].Vertex_ID[0]).Norm() / 4.);
         tv = vertices[faces[i].Vertex_ID[0]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();
         Vertex v0 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), c, glm::vec3(1, 0, 0));
         c = color;
 
-        if (GetVerticesFromVertex(faces[i].Vertex_ID[1]).size() == 0) c = color_red;
-        else c = glm::vec3(Laplacian(faces[i].Vertex_ID[1]).Norm() / 4.);
         tv = vertices[faces[i].Vertex_ID[1]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();
         Vertex v1 = Vertex(p, glm::vec3(normal.x, normal.y, normal.z), c, glm::vec3(0, 1, 0));
         c = color;
 
-        if (GetVerticesFromVertex(faces[i].Vertex_ID[2]).size() == 0) c = color_red;
-        else c = glm::vec3(Laplacian(faces[i].Vertex_ID[2]).Norm() / 4.);
         tv = vertices[faces[i].Vertex_ID[2]];
         p = glm::vec3(tv.x, tv.y, tv.z);
         normal = faces[i].ToTriangle(this).Normal();

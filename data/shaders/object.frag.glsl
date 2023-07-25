@@ -11,15 +11,16 @@ out vec4 FragColor;
 uniform vec3 cameraPos;
 uniform vec3 lightPos;
 uniform vec4 uniformColor;
-uniform vec3 uniformWireColor = vec3(0., 0., 0.);
 uniform sampler2D uniformTexture;
 
-float lineWidth = 0.;//0.5;
+uniform vec3 uniformWireColor = vec3(0., 0., 0.);
+uniform float uniformWireWidth = 0.5;
+
 
 void main() {
 
     vec3 d = fwidth(vertexBary);
-    vec3 f = step(d * lineWidth, vertexBary);
+    vec3 f = step(d * uniformWireWidth, vertexBary);
 
     vec3 base_color = vertexColor;
 
