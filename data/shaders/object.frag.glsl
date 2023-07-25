@@ -11,6 +11,7 @@ out vec4 FragColor;
 uniform vec3 cameraPos;
 uniform vec3 lightPos;
 uniform vec4 uniformColor;
+uniform vec3 uniformWireColor = vec3(0., 0., 0.);
 uniform sampler2D uniformTexture;
 
 float lineWidth = 0.;//0.5;
@@ -20,9 +21,10 @@ void main() {
     vec3 d = fwidth(vertexBary);
     vec3 f = step(d * lineWidth, vertexBary);
 
+    vec3 base_color = vertexColor;
+
     if (min(min(f.x, f.y), f.z) < 0.5) {
-        FragColor = vec4(vec3(0.1), 1.);
-        return;
+        base_color = uniformWireColor;
     }
 
     vec3 norm = normalize(vertexNormal);
@@ -37,8 +39,7 @@ void main() {
     float spec = 1.0 * pow(max(dot(cameraDir, reflectDir), 0.0), 256);
 
     //vec3 base_color = vec3(0.8, 0.4, 0.1);
-    vec3 base_color = vertexColor;
     //FragColor = vec4(base_color, 1.0);
     FragColor = (ambient + diff + spec) * vec4(base_color, 1.0);//texture(uniformTexture, vertexTexCoords);
-    //FragColor = vec4(norm, 1.0);
+    //FragColor = vec4(uniformWireColor, 1.0);
 };

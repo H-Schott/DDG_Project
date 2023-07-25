@@ -145,6 +145,13 @@ void Mesh::SetColor(unsigned int vertex_id, glm::vec3 color) {
 }
 
 
+void Mesh::SetColors(glm::vec3 color) {
+    for (int i = 0; i < vertices.size(); i++) {
+        SetColor(i, color);
+    }
+}
+
+
 void Mesh::SetColors(std::vector<glm::vec3> colors) {
     for (int i = 0; i < colors.size(); i++) {
         SetColor(i, colors[i]);

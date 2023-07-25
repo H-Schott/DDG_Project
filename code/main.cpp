@@ -31,6 +31,13 @@ cmake ..
 make
 */
 
+/* WINDOWS
+create build dir
+open with cmake
+generate vs project in build
+open and compile with vs
+*/
+
 Eigen::Vector2d a(5.0, 6.0);
 Eigen::Vector3d b(5.0, 6.0, 7.0);
 Eigen::Vector4d c(5.0, 6.0, 7.0, 8.0);
@@ -107,25 +114,31 @@ int main(int, char**) {
     //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
     //Mesh mesh = Mesh("../ressources/samples/statue.stl");
     //Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
-    Mesh mesh_1 = Mesh("data/meshs/penix.obj");
-    TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
+    Mesh mesh = Mesh("data/meshs/lucy.ply");
+    //TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
 
 
     /*std::vector<unsigned int> valences = topo_mesh.GetValence();
     for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;*/
 
-    Mesh mesh = topo_mesh.ToGlMesh();
-    mesh.SetColors(topo_mesh.LaplacianNorms());
+    //Mesh mesh = topo_mesh.ToGlMesh();
+    //mesh.SetColors(topo_mesh.LaplacianNorms());
     //mesh.SetColors(topo_mesh.Laplacians());
-    mesh.setupMesh();
+    //mesh.setupMesh();
 
     
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, -1.0f, 0.0f));
 
+    bool color_change = false;
+    float triangle_color[4] = { 0.38, 0.306, 0.102, 1. };
+    float wire_color[4] = { 1., 1., 1., 1. };
+
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
 
+
+        // IMGUI interface
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -137,11 +150,15 @@ int main(int, char**) {
         ImGui::End();
 
         ImGui::SetNextWindowPos(ImVec2(10, 80));
-        ImGui::SetNextWindowSize(ImVec2(180, 60));
-        ImGui::Begin("Options");
+        ImGui::SetNextWindowSize(ImVec2(250, 150));
+        ImGui::Begin("Display");
         ImGui::Checkbox(" WireFrame", &wireframe);
+        color_change |= ImGui::ColorEdit3("Triangles", (float*)&triangle_color);
+        color_change |= ImGui::ColorEdit3("WireFrame", (float*)&wire_color);
         ImGui::End();
+
         
+
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -152,6 +169,12 @@ int main(int, char**) {
 
         object_shader.use();
 
+        if (color_change) {
+            mesh.SetColors(glm::vec3(triangle_color[0], triangle_color[1], triangle_color[2]));
+            mesh.setupMesh();
+        }
+
+
         // MVP
         glm::mat4 view = orbiter.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(orbiter.Zoom), float(size_x) / float(size_y), 0.1f, 100.0f);
@@ -159,6 +182,7 @@ int main(int, char**) {
         object_shader.setMat4("view", view);
         object_shader.setMat4("projection", projection);
 
+        object_shader.setVec3("uniformWireColor", glm::vec3(wire_color[0], wire_color[1], wire_color[2]));
         object_shader.setVec3("lightPos", glm::vec3(0, 0, 3));
         object_shader.setVec3("cameraPos", orbiter.Position);
         object_shader.setVec3("min_vertex", mesh.min_vertex);
