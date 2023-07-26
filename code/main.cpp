@@ -53,7 +53,15 @@ float lastFrame = 0.f;
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
 
+bool color_change = false;
+float triangle_color[4] = { 0.38, 0.306, 0.102, 1. };
+float wire_color[4] = { 0.53, 0.53, 0.53, 1. };
+float wire_width = 0.5;
+
 bool wireframe = false;
+
+bool tex_change = false;
+int tex_id = 0;
 
 Camera camera = Camera(cameraPos, cameraUp, -90.f, 0.f);
 Orbiter orbiter = Orbiter(cameraPos);
@@ -130,11 +138,6 @@ int main(int, char**) {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, -1.0f, 0.0f));
 
-    bool color_change = false;
-    float triangle_color[4] = { 0.38, 0.306, 0.102, 1. };
-    float wire_color[4] = { 0.53, 0.53, 0.53, 1. };
-    float wire_width = 0.5;
-
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
 
@@ -151,12 +154,15 @@ int main(int, char**) {
         ImGui::End();
 
         ImGui::SetNextWindowPos(ImVec2(10, 80));
-        ImGui::SetNextWindowSize(ImVec2(250, 150));
+        ImGui::SetNextWindowSize(ImVec2(250, 400));
         ImGui::Begin("Display");
-        ImGui::Checkbox(" WireFrame", &wireframe);
+        ImGui::Checkbox("WireFrame", &wireframe);
         color_change |= ImGui::ColorEdit3("Triangles", (float*)&triangle_color);
         color_change |= ImGui::ColorEdit3("WireFrame", (float*)&wire_color);
         ImGui::SliderFloat("Wire width", (float*)&wire_width, 0., 4.);
+        tex_change |= ImGui::RadioButton("Color", &tex_id, 0);
+        tex_change |= ImGui::RadioButton("Normal", &tex_id, 1);
+        tex_change |= ImGui::RadioButton("Laplacian", &tex_id, 2);
         ImGui::End();
 
         
@@ -171,9 +177,23 @@ int main(int, char**) {
 
         object_shader.use();
 
-        if (color_change) {
-            mesh.SetColors(glm::vec3(triangle_color[0], triangle_color[1], triangle_color[2]));
+        if (color_change || tex_change) {
+            switch (tex_id) {
+            case 0: // color
+                mesh.SetColors(glm::vec3(triangle_color[0], triangle_color[1], triangle_color[2]));
+                break;
+            case 1: // normal
+                mesh.SetColors(topo_mesh.Laplacians());
+                break;
+            case 2: // laplacian
+                mesh.SetColors(topo_mesh.LaplacianNorms());
+                break;
+            default:
+                break;
+            }
             mesh.setupMesh();
+            color_change = false;
+            tex_change = false;
         }
 
 
