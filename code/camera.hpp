@@ -54,7 +54,7 @@ public:
     glm::vec3 Position;
     glm::vec3 LookAt;
     glm::vec3 Up;
-    float Zoom = 45.f;
+    float Zoom = 25.f;
 
     float MovementSpeed = 2.5f;
     float MouseSensitivity = 0.02f;

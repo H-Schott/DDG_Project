@@ -391,9 +391,15 @@ std::vector<double> TopoMesh3D::LaplacianNorms(bool normalized) const {
         }
     }
 
-    std::cout << min_lap << " " << max_lap << std::endl;
+    std::vector<double> laps_3;
 
-    return laps;
+    for (int i = 1; i < faces.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+            laps_3.push_back(laps[faces[i].Vertex_ID[j] - 1]);
+        }
+    }
+
+    return laps_3;
 }
 
 std::vector<Vector> TopoMesh3D::Laplacians(bool normalized) const {
@@ -405,7 +411,15 @@ std::vector<Vector> TopoMesh3D::Laplacians(bool normalized) const {
         else laps.push_back(lap);
     }
 
-    return laps;
+    std::vector<Vector> laps_3;
+
+    for (int i = 1; i < faces.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+            laps_3.push_back(laps[faces[i].Vertex_ID[j] - 1]);
+        }
+    }
+
+    return laps_3;
 }
 
 
