@@ -21,8 +21,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <Eigen/Core>
-
 
 /* LINUX
 mkdir build
@@ -38,9 +36,6 @@ generate vs project in build
 open and compile with vs
 */
 
-Eigen::Vector2d a(5.0, 6.0);
-Eigen::Vector3d b(5.0, 6.0, 7.0);
-Eigen::Vector4d c(5.0, 6.0, 7.0, 8.0);
 
 // camera
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  4.5f);
@@ -119,20 +114,11 @@ int main(int, char**) {
 
     Mesh mesh_frame = Mesh::Frame();
     Mesh mesh_grid = Mesh::Grid(4);
-    //Mesh mesh = Mesh("../ressources/samples/centurion_helmet.obj");
-    //Mesh mesh = Mesh("../ressources/samples/statue.stl");
     //Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
     Mesh mesh_1 = Mesh("data/meshs/face.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
 
-
-    /*std::vector<unsigned int> valences = topo_mesh.GetValence();
-    for (int i = 0; i < valences.size(); i++) std::cout << i << " : " << valences[i] << std::endl;*/
-
     Mesh mesh = topo_mesh.ToGlMesh_3();
-    //mesh.SetColors(topo_mesh.LaplacianNorms());
-    //mesh.SetColors(topo_mesh.Laplacians());
-    //mesh.setupMesh();
 
     
     glm::mat4 model = glm::mat4(1.0f);

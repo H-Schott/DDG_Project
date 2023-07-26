@@ -423,6 +423,36 @@ std::vector<Vector> TopoMesh3D::Laplacians(bool normalized) const {
 }
 
 
+Eigen::SparseMatrix<bool> TopoMesh3D::GetConnectivityMatrix() const {
+    int dimension = vertices.size() - 1;
+    Eigen::SparseMatrix<bool> conMat(dimension, dimension);
+
+    for (int i = 1; i < dimension + 1; i++) {
+        std::vector<unsigned int> iv_neis = GetVerticesFromVertex(i);
+        for (int j = 0; j < iv_neis.size(); j++) {
+            conMat.coeffRef(i - 1, iv_neis[j] - 1) = 1;
+        }
+    }
+
+    return conMat;
+}
+
+Eigen::SparseMatrix<double> TopoMesh3D::GetLaplacianMatrix() const {
+    int dimension = vertices.size() - 1;
+    Eigen::SparseMatrix<double> lapMat(dimension, dimension);
+
+    for (int i = 1; i < dimension + 1; i++) {
+        std::vector<unsigned int> iv_neis = GetVerticesFromVertex(i);
+        for (int j = 0; j < iv_neis.size(); j++) {
+            lapMat.coeffRef(i - 1, iv_neis[j] - 1) = -1;
+        }
+        lapMat.coeffRef(i - 1, i - 1) = iv_neis.size();
+    }
+
+    return lapMat;
+}
+
+
 void TopoMesh3D::DebugLog() const {
     unsigned int nb_vertices = vertices.size();
     unsigned int nb_faces = faces.size();

@@ -12,6 +12,8 @@
 #include "vector.hpp"
 #include "triangle.hpp"
 
+#include <Eigen/SparseCore>
+
 
 class Mesh;
 class TopoMesh3D;
@@ -67,6 +69,9 @@ public:
     std::vector<double> LaplacianNorms(bool normalized = true) const;
     std::vector<Vector> Laplacians(bool normalized = true) const;
 
+    // Matrices
+    Eigen::SparseMatrix<bool> GetConnectivityMatrix() const;
+    Eigen::SparseMatrix<double> GetLaplacianMatrix() const;
 
     void DebugLog() const;
 
