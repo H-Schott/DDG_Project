@@ -68,10 +68,18 @@ public:
     Vector Laplacian(unsigned int vertex_id) const;
     std::vector<double> LaplacianNorms(bool normalized = true) const;
     std::vector<Vector> Laplacians(bool normalized = true) const;
+    std::vector<Vector> LaplaciansMatrix(bool normalized = true) const;
+
+    Vector Gradient(unsigned int face_id, double f0, double f1, double f2) const;
+    std::vector<double> GradientNormsZ(bool normalized = true) const;
 
     // Matrices
     Eigen::SparseMatrix<bool> GetConnectivityMatrix() const;
+    Eigen::SparseMatrix<double> GetGradientMatrix() const;
     Eigen::SparseMatrix<double> GetLaplacianMatrix() const;
+
+    // Edition
+    void Diffusion(double k);
 
     void DebugLog() const;
 

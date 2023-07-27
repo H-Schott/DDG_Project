@@ -8,6 +8,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/hash.hpp"
 
+#include <Eigen/Dense>
 
 TopoMesh3D::TopoMesh3D(const Mesh& mesh) {
     vertices.clear();
@@ -402,6 +403,40 @@ std::vector<double> TopoMesh3D::LaplacianNorms(bool normalized) const {
     return laps_3;
 }
 
+std::vector<Vector> TopoMesh3D::LaplaciansMatrix(bool normalized) const {
+    std::vector<Vector> laps;
+
+    Eigen::VectorXd coo_x(vertices.size() - 1);
+    Eigen::VectorXd coo_y(vertices.size() - 1);
+    Eigen::VectorXd coo_z(vertices.size() - 1);
+    for (int i = 1; i < vertices.size(); i++) {
+        coo_x(i - 1) = vertices[i].x;
+        coo_y(i - 1) = vertices[i].y;
+        coo_z(i - 1) = vertices[i].z;
+    }
+
+    Eigen::SparseMatrix<double> lapMat = GetLaplacianMatrix();
+
+    Eigen::VectorXd lap_x = lapMat * coo_x;
+    Eigen::VectorXd lap_y = lapMat * coo_y;
+    Eigen::VectorXd lap_z = lapMat * coo_z;
+
+    for (int i = 0; i < vertices.size() - 1; i++) {
+        Vector v(lap_x[i], lap_y[i], lap_z[i]);
+        laps.push_back(v.Normalized());
+    }
+
+    std::vector<Vector> laps_3;
+
+    for (int i = 1; i < faces.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+            laps_3.push_back(laps[faces[i].Vertex_ID[j] - 1]);
+        }
+    }
+
+    return laps_3;
+}
+
 std::vector<Vector> TopoMesh3D::Laplacians(bool normalized) const {
     std::vector<Vector> laps;
 
@@ -423,6 +458,53 @@ std::vector<Vector> TopoMesh3D::Laplacians(bool normalized) const {
 }
 
 
+Vector TopoMesh3D::Gradient(unsigned int face_id, double f0, double f1, double f2) const {
+    Vector grad;
+
+    double f[3] = { f0, f1, f2 };
+
+    Face3 face = faces[face_id];
+    Vector normal = face.ToTriangle(this).Normal();
+    for (int i = 0; i < 3; i++) {
+        Vector Je = Cross(normal, face.ToTriangle(this).Edge(i));
+        grad += f[i] * Je;
+    }
+    grad /= 2. * face.ToTriangle(this).Area();
+
+    return grad;
+}
+
+std::vector<double> TopoMesh3D::GradientNormsZ(bool normalized) const {
+    std::vector<double> grads;
+    double min_grad = Gradient(1, vertices[faces[1].Vertex_ID[0]].x, vertices[faces[1].Vertex_ID[1]].x, vertices[faces[1].Vertex_ID[2]].x).Norm();
+    double max_grad = 0.;
+    for (int i = 1; i < faces.size(); i++) {
+        Face3 face = faces[i];
+        Vector grad = Gradient(i, vertices[face.Vertex_ID[0]].x, vertices[face.Vertex_ID[1]].x, vertices[face.Vertex_ID[2]].x);
+        double grad_n = grad.Norm();
+        grads.push_back(grad_n);
+        if (grad_n < min_grad) min_grad = grad_n;
+        if (grad_n > max_grad) max_grad = grad_n;
+    }
+
+    if (normalized && max_grad > 0.) {
+        for (int i = 0; i < grads.size(); i++) {
+            grads[i] = (grads[i] - min_grad) / (max_grad - min_grad);
+        }
+    }
+
+    std::vector<double> grads_3;
+
+    for (int i = 1; i < faces.size(); i++) {
+        grads_3.push_back(grads[i]);
+        grads_3.push_back(grads[i]);
+        grads_3.push_back(grads[i]);
+    }
+
+    return grads_3;
+}
+
+
 Eigen::SparseMatrix<bool> TopoMesh3D::GetConnectivityMatrix() const {
     int dimension = vertices.size() - 1;
     Eigen::SparseMatrix<bool> conMat(dimension, dimension);
@@ -435,6 +517,26 @@ Eigen::SparseMatrix<bool> TopoMesh3D::GetConnectivityMatrix() const {
     }
 
     return conMat;
+}
+
+Eigen::SparseMatrix<double> TopoMesh3D::GetGradientMatrix() const {
+    int dim_vertices = vertices.size() - 1;
+    int dim_faces = faces.size() - 1;
+    Eigen::SparseMatrix<double> gradMat(dim_faces, dim_vertices);
+
+    // add each face in the matrix
+    for (int i = 1; i < dim_faces + 1; i++) {
+
+        Face3 face = faces[i];
+        double area_coeff = 1. / (2. * face.ToTriangle(this).Area());
+
+        // add 3 vertices
+        for (int j = 0; j < 3; j++) {
+            //gradMat.coeffRef(i - 1, face.Vertex_ID[j] - 1) = area_coeff * ;
+        }
+    }
+
+    return gradMat;
 }
 
 Eigen::SparseMatrix<double> TopoMesh3D::GetLaplacianMatrix() const {
@@ -450,6 +552,14 @@ Eigen::SparseMatrix<double> TopoMesh3D::GetLaplacianMatrix() const {
     }
 
     return lapMat;
+}
+
+
+void TopoMesh3D::Diffusion(double k) {
+    for (int i = 1; i < vertices.size(); i++) {
+        Vector lap = Laplacian(i);
+        vertices[i] -= k * lap;
+    }
 }
 
 

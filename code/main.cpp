@@ -58,6 +58,8 @@ bool wireframe = false;
 bool tex_change = false;
 int tex_id = 0;
 
+bool manip_diffusion = false;
+
 Camera camera = Camera(cameraPos, cameraUp, -90.f, 0.f);
 Orbiter orbiter = Orbiter(cameraPos);
 
@@ -68,6 +70,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 
 int main(int, char**) {
+
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -98,7 +101,6 @@ int main(int, char**) {
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
 
 
     std::cout << "Hello, world!\n";
@@ -151,6 +153,11 @@ int main(int, char**) {
         tex_change |= ImGui::RadioButton("Laplacian", &tex_id, 2);
         ImGui::End();
 
+        ImGui::SetNextWindowPos(ImVec2(10, 510));
+        ImGui::SetNextWindowSize(ImVec2(250, 400));
+        ImGui::Begin("Manipulations");
+        manip_diffusion = ImGui::Button("Diffusion");
+        ImGui::End();
         
 
 
@@ -169,10 +176,12 @@ int main(int, char**) {
                 mesh.SetColors(glm::vec3(triangle_color[0], triangle_color[1], triangle_color[2]));
                 break;
             case 1: // normal
+                //mesh.SetColors(topo_mesh.Laplacians());
                 mesh.SetColors(topo_mesh.Laplacians());
                 break;
             case 2: // laplacian
                 mesh.SetColors(topo_mesh.LaplacianNorms());
+                //mesh.SetColors(topo_mesh.GradientNormsZ());
                 break;
             default:
                 break;
@@ -180,6 +189,11 @@ int main(int, char**) {
             mesh.setupMesh();
             color_change = false;
             tex_change = false;
+        }
+
+
+        if (manip_diffusion) {
+            std::cout << "clic" << std::endl;
         }
 
 
