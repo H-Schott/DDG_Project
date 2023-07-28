@@ -558,7 +558,12 @@ Eigen::SparseMatrix<double> TopoMesh3D::GetLaplacianMatrix() const {
 void TopoMesh3D::Diffusion(double k) {
     for (int i = 1; i < vertices.size(); i++) {
         Vector lap = Laplacian(i);
-        vertices[i] -= k * lap;
+        vertices[i].x -= k * lap.x;
+        vertices[i].y -= k * lap.y;
+        vertices[i].z -= k * lap.z;
+        /*vertices[i].x = 0.;
+        vertices[i].y = 0.;
+        vertices[i].z = 0.;*/
     }
 }
 

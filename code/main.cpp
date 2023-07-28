@@ -114,13 +114,14 @@ int main(int, char**) {
     Shader object_shader = Shader("data/shaders/object.vert.glsl", "data/shaders/object.frag.glsl");
     Shader debug_shader = Shader("data/shaders/debug.vert.glsl", "data/shaders/debug.frag.glsl");
 
-    Mesh mesh_frame = Mesh::Frame();
-    Mesh mesh_grid = Mesh::Grid(4);
+    //Mesh mesh_frame = Mesh::Frame();
+    //Mesh mesh_grid = Mesh::Grid(4);
     //Mesh mesh_1 = Mesh("data/meshs/centurion_helmet.obj");
     Mesh mesh_1 = Mesh("data/meshs/face.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
 
     Mesh mesh = topo_mesh.ToGlMesh_3();
+    mesh.setupMesh();
 
     
     glm::mat4 model = glm::mat4(1.0f);
@@ -165,10 +166,23 @@ int main(int, char**) {
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        if (manip_diffusion) {
+            //for (int i = 0; i < 100; i++)
+            topo_mesh.Diffusion(0.001);
+            mesh = topo_mesh.ToGlMesh_3();
+            mesh.setupMesh();
+            tex_change = true;
+            manip_diffusion = false;
+            std::cout << "manip" << std::endl;
+        }
+
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
         object_shader.use();
+
 
         if (color_change || tex_change) {
             switch (tex_id) {
@@ -192,9 +206,6 @@ int main(int, char**) {
         }
 
 
-        if (manip_diffusion) {
-            std::cout << "clic" << std::endl;
-        }
 
 
         // MVP
@@ -212,6 +223,7 @@ int main(int, char**) {
         object_shader.setVec3("cameraPos", orbiter.Position);
         object_shader.setVec3("min_vertex", mesh.min_vertex);
         object_shader.setVec3("max_vertex", mesh.max_vertex);
+        //std::cout << mesh.min_vertex.x << " " << mesh.min_vertex.y << " " << mesh.min_vertex.z << std::endl;
 
         if(wireframe) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         else glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -234,6 +246,8 @@ int main(int, char**) {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+    mesh.Release();
 
     glDeleteProgram(object_shader.ID);
     glDeleteProgram(debug_shader.ID);

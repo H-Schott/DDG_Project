@@ -11,7 +11,6 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std:
     //std::cout << vertices.size() << std::endl;
     //std::cout << indices.size() / 3 << std::endl;
 
-    setupMesh();
 }
 
 
@@ -28,7 +27,6 @@ Mesh::Mesh(std::string path) {
 
     std::cout << indices.size() / 3. << " faces." << std::endl;
     std::cout << vertices.size() << " vertices." << std::endl;
-    setupMesh();
 }
 
 
@@ -73,7 +71,7 @@ void Mesh::AddAiMesh(const aiMesh* mesh, const aiScene* scene) {
 }
 
 
-Mesh::~Mesh() {
+void Mesh::Release() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
@@ -212,6 +210,7 @@ void Mesh::Draw(Shader& shader) {
     glActiveTexture(GL_TEXTURE0);
 
     // draw mesh
+    //std::cout << indices.size() << std::endl;
     glBindVertexArray(VAO);
     glDrawElements(primitives, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

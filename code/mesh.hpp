@@ -45,7 +45,7 @@ public:
 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
     Mesh(std::string path);
-    ~Mesh();
+    ~Mesh() {};
 
     void Center();
     void Scale(double coeff);
@@ -59,6 +59,7 @@ public:
     
     void setupMesh();
     void Draw(Shader& shader);
+    void Release();
 
     static Mesh Frame();
     static Mesh Grid(int size);
