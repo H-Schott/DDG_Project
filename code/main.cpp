@@ -167,13 +167,11 @@ int main(int, char**) {
         lastFrame = currentFrame;
 
         if (manip_diffusion) {
-            //for (int i = 0; i < 100; i++)
-            topo_mesh.Diffusion(0.001);
+            for (int i = 0; i < 10; i++) topo_mesh.Diffusion(0.01);
             mesh = topo_mesh.ToGlMesh_3();
             mesh.setupMesh();
             tex_change = true;
             manip_diffusion = false;
-            std::cout << "manip" << std::endl;
         }
 
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
