@@ -167,7 +167,8 @@ int main(int, char**) {
         lastFrame = currentFrame;
 
         if (manip_diffusion) {
-            for (int i = 0; i < 10; i++) topo_mesh.Diffusion(0.01);
+            //for (int i = 0; i < 10; i++) topo_mesh.Diffusion(0.01);
+            topo_mesh.Smooth();
             mesh = topo_mesh.ToGlMesh_3();
             mesh.setupMesh();
             tex_change = true;

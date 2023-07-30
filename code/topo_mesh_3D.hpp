@@ -80,6 +80,7 @@ public:
 
     // Edition
     void Diffusion(double k);
+    void Smooth();
 
     void DebugLog() const;
 

@@ -567,6 +567,26 @@ void TopoMesh3D::Diffusion(double k) {
     }
 }
 
+void TopoMesh3D::Smooth() {
+    for (int i = 1; i < vertices.size(); i++) {
+        std::vector<unsigned int> v_nei_id = GetVerticesFromVertex(i);
+
+        if (v_nei_id.size() == 0) continue;
+
+        Vector v = vertices[i];
+
+        for (int j = 0; j < v_nei_id.size(); j++) {
+            v += vertices[v_nei_id[j]];
+        }
+
+        v /= (v_nei_id.size() + 1);
+
+        vertices[i].x = v.x;
+        vertices[i].y = v.y;
+        vertices[i].z = v.z;
+    }
+}
+
 
 void TopoMesh3D::DebugLog() const {
     unsigned int nb_vertices = vertices.size();
