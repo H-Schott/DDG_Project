@@ -67,6 +67,7 @@ public:
     double Laplacian(unsigned int vertex_id, unsigned int component_id) const;
     Vector Laplacian(unsigned int vertex_id) const;
     std::vector<double> LaplacianNorms(bool normalized = true) const;
+    std::vector<double> LaplacianNormsMatrix(bool normalized = true) const;
     std::vector<Vector> Laplacians(bool normalized = true) const;
     std::vector<Vector> LaplaciansMatrix(bool normalized = true) const;
 

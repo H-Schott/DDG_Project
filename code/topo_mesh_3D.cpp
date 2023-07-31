@@ -403,6 +403,55 @@ std::vector<double> TopoMesh3D::LaplacianNorms(bool normalized) const {
     return laps_3;
 }
 
+std::vector<double> TopoMesh3D::LaplacianNormsMatrix(bool normalized) const {
+    std::vector<double> laps;
+
+    Eigen::VectorXd coo_x(vertices.size() - 1);
+    Eigen::VectorXd coo_y(vertices.size() - 1);
+    Eigen::VectorXd coo_z(vertices.size() - 1);
+    for (int i = 1; i < vertices.size(); i++) {
+        coo_x(i - 1) = vertices[i].x;
+        coo_y(i - 1) = vertices[i].y;
+        coo_z(i - 1) = vertices[i].z;
+    }
+
+    Eigen::SparseMatrix<double> lapMat = GetLaplacianMatrix();
+
+    Eigen::VectorXd lap_x = lapMat * coo_x;
+    Eigen::VectorXd lap_y = lapMat * coo_y;
+    Eigen::VectorXd lap_z = lapMat * coo_z;
+
+
+    double min_lap = Vector(lap_x[0], lap_y[0], lap_z[0]).Norm();
+    double max_lap = 0.;
+    for (int i = 0; i < vertices.size() - 1; i++) {
+        Vector v(lap_x[i], lap_y[i], lap_z[i]);
+        double lap_n = v.Norm();
+        laps.push_back(lap_n);
+
+        if (lap_n < min_lap) min_lap = lap_n;
+        if (lap_n > max_lap) max_lap = lap_n;
+    }
+
+    max_lap *= 0.3;
+
+    if (normalized && max_lap > 0.) {
+        for (int i = 0; i < laps.size(); i++) {
+            laps[i] = (laps[i] - min_lap) / (max_lap - min_lap);
+        }
+    }
+
+    // x3 for gl mesh coherency
+    std::vector<double> laps_3;
+    for (int i = 1; i < faces.size(); i++) {
+        for (int j = 0; j < 3; j++) {
+            laps_3.push_back(laps[faces[i].Vertex_ID[j] - 1]);
+        }
+    }
+
+    return laps_3;
+}
+
 std::vector<Vector> TopoMesh3D::LaplaciansMatrix(bool normalized) const {
     std::vector<Vector> laps;
 
@@ -540,16 +589,40 @@ Eigen::SparseMatrix<double> TopoMesh3D::GetGradientMatrix() const {
 }
 
 Eigen::SparseMatrix<double> TopoMesh3D::GetLaplacianMatrix() const {
+
+
     int dimension = vertices.size() - 1;
-    Eigen::SparseMatrix<double> lapMat(dimension, dimension);
+    std::vector<Eigen::Triplet<double>> triplets;
 
     for (int i = 1; i < dimension + 1; i++) {
-        std::vector<unsigned int> iv_neis = GetVerticesFromVertex(i);
-        for (int j = 0; j < iv_neis.size(); j++) {
-            lapMat.coeffRef(i - 1, iv_neis[j] - 1) = -1;
+        // area normalization
+        double area_coeff = 0.;
+        std::vector<unsigned int> i_neighbours_face = GetFacesFromVertex(i);
+        for (unsigned int& i : i_neighbours_face) {
+            area_coeff += faces[i].ToTriangle(this).Area();
         }
-        lapMat.coeffRef(i - 1, i - 1) = iv_neis.size();
+        area_coeff = 3. / (2. * area_coeff);
+        
+
+        std::vector<unsigned int> iv_neis = GetVerticesFromVertex(i);
+        double total_cot_coeff = 0.;
+        for (int j = 0; j < iv_neis.size(); j++) {
+            unsigned int i_j_sommet = iv_neis[j];
+            unsigned int i_alpha_sommet = iv_neis[(j + iv_neis.size() - 1) % iv_neis.size()];
+            unsigned int i_beta_sommet = iv_neis[(j + 1) % iv_neis.size()];
+            double cot_alpha = CoTan(vertices[i], vertices[i_alpha_sommet], vertices[i_j_sommet]);
+            double cot_beta = CoTan(vertices[i], vertices[i_beta_sommet], vertices[i_j_sommet]);
+            double cot_coeff = cot_alpha + cot_beta;
+
+            total_cot_coeff += cot_coeff;
+
+            triplets.push_back(Eigen::Triplet<double>(i - 1, iv_neis[j] - 1, - cot_coeff * area_coeff));
+        }
+        triplets.push_back(Eigen::Triplet<double>(i - 1, i - 1, total_cot_coeff * area_coeff));
     }
+
+    Eigen::SparseMatrix<double> lapMat(dimension, dimension);
+    lapMat.setFromTriplets(triplets.begin(), triplets.end());
 
     return lapMat;
 }
@@ -561,9 +634,6 @@ void TopoMesh3D::Diffusion(double k) {
         vertices[i].x += k * lap.x;
         vertices[i].y += k * lap.y;
         vertices[i].z += k * lap.z;
-        /*vertices[i].x = 0.;
-        vertices[i].y = 0.;
-        vertices[i].z = 0.;*/
     }
 }
 

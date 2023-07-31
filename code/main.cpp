@@ -189,8 +189,7 @@ int main(int, char**) {
                 mesh.SetColors(glm::vec3(triangle_color[0], triangle_color[1], triangle_color[2]));
                 break;
             case 1: // normal
-                //mesh.SetColors(topo_mesh.Laplacians());
-                mesh.SetColors(topo_mesh.Laplacians());
+                mesh.SetColors(topo_mesh.LaplaciansMatrix());
                 break;
             case 2: // laplacian
                 mesh.SetColors(topo_mesh.LaplacianNorms());
