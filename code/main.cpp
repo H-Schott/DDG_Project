@@ -121,12 +121,14 @@ int main(int, char**) {
     Mesh mesh_1 = Mesh("data/meshs/face.obj");
     TopoMesh3D topo_mesh = TopoMesh3D(mesh_1);
 
+
     Mesh mesh = topo_mesh.ToGlMesh_3();
     mesh.setupMesh();
 
     
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, -1.0f, 0.0f));
+
 
     while(!glfwWindowShouldClose(window)) {
         processInput(window);
@@ -154,6 +156,7 @@ int main(int, char**) {
         tex_change |= ImGui::RadioButton("Color", &tex_id, 0);
         tex_change |= ImGui::RadioButton("Normal", &tex_id, 1);
         tex_change |= ImGui::RadioButton("Laplacian", &tex_id, 2);
+        tex_change |= ImGui::RadioButton("Depth", &tex_id, 3);
         ImGui::End();
 
         ImGui::SetNextWindowPos(ImVec2(10, 510));
@@ -162,7 +165,6 @@ int main(int, char**) {
         manip_diffusion = ImGui::Button("Diffusion");
         ImGui::End();
         
-
 
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -181,11 +183,13 @@ int main(int, char**) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-
         object_shader.use();
 
 
         if (color_change || tex_change) {
+
+            object_shader.setBool("showDepthMap", false);
+
             switch (tex_id) {
             case 0: // color
                 mesh.SetColors(glm::vec3(triangle_color[0], triangle_color[1], triangle_color[2]));
@@ -197,6 +201,8 @@ int main(int, char**) {
                 mesh.SetColors(topo_mesh.LaplacianNorms());
                 //mesh.SetColors(topo_mesh.GradientNormsZ());
                 break;
+            case 3: // Depth
+                object_shader.setBool("showDepthMap", true);
             default:
                 break;
             }
@@ -260,8 +266,6 @@ int main(int, char**) {
         }
 
 
-
-
         // MVP
         glm::mat4 view = orbiter.GetViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(orbiter.Zoom), float(size_x) / float(size_y), 0.1f, 100.0f);
@@ -271,7 +275,6 @@ int main(int, char**) {
 
         object_shader.setVec3("uniformWireColor", glm::vec3(wire_color[0], wire_color[1], wire_color[2]));
         object_shader.setFloat("uniformWireWidth", wire_width);
-
 
         object_shader.setVec3("lightPos", glm::vec3(0, 0, 3));
         object_shader.setVec3("cameraPos", orbiter.Position);

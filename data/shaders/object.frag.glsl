@@ -1,6 +1,7 @@
 #version 330 core
 
 in vec3 vertexPos;
+in vec3 depthVertexPos;
 in vec3 vertexNormal;
 in vec3 vertexColor;
 in vec2 vertexTexCoords;
@@ -15,6 +16,8 @@ uniform sampler2D uniformTexture;
 
 uniform vec3 uniformWireColor = vec3(0., 0., 0.);
 uniform float uniformWireWidth = 0.5;
+
+uniform bool showDepthMap = false;
 
 
 void main() {
@@ -41,6 +44,7 @@ void main() {
 
     //vec3 base_color = vec3(0.8, 0.4, 0.1);
     //FragColor = vec4(base_color, 1.0);
-    FragColor = (ambient + diff + spec) * vec4(base_color, 1.0);//texture(uniformTexture, vertexTexCoords);
+    if (showDepthMap) FragColor = vec4(0.5 * (1. + vec3(depthVertexPos.z)), 1.);
+    else FragColor = (ambient + diff + spec) * vec4(base_color, 1.0);//texture(uniformTexture, vertexTexCoords);
     //FragColor = vec4(uniformWireColor, 1.0);
 };

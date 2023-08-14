@@ -7,6 +7,7 @@ layout (location = 3) in vec3 aBary;
 layout (location = 4) in vec2 aTexCoords;
 
 out vec3 vertexPos;
+out vec3 depthVertexPos;
 out vec3 vertexNormal;
 out vec3 vertexColor;
 out vec2 vertexTexCoords;
@@ -27,8 +28,9 @@ void main() {
 
    vec3 new_aPos = aPos - center;
    new_aPos *= scale;
-   gl_Position = projection * view * model * vec4(new_aPos.x, new_aPos.y, new_aPos.z, 1.0);
+   gl_Position = projection * view * model * vec4(new_aPos, 1.0);
    vertexPos = vec3(model * vec4(new_aPos, 1.0));
+   depthVertexPos = vec3(view * vec4(new_aPos, 0.));
    //vertexNormal = vec3(model * vec4(aNormal, 0.0));
    vertexNormal = mat3(transpose(inverse(model))) * aNormal;
    vertexColor = aColor;//vec4(0.5 + vec3(new_aPos.x, new_aPos.y, new_aPos.z), 1.0);
