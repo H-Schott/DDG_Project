@@ -42,7 +42,7 @@ public:
 
 
 class TopoMesh3D {
-protected:
+public:
     std::vector<Vertex3> vertices;  // this first vertex is the infinite vertex
     std::vector<Face3> faces;
 public:

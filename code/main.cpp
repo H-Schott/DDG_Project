@@ -54,6 +54,7 @@ float wire_color[4] = { 0.53, 0.53, 0.53, 1. };
 float wire_width = 0.5;
 
 bool wireframe = false;
+bool borders = false;
 
 bool tex_change = false;
 int tex_id = 0;
@@ -146,6 +147,7 @@ int main(int, char**) {
         ImGui::SetNextWindowSize(ImVec2(250, 400));
         ImGui::Begin("Display");
         ImGui::Checkbox("WireFrame", &wireframe);
+        color_change |= ImGui::Checkbox("Borders", &borders);
         color_change |= ImGui::ColorEdit3("Triangles", (float*)&triangle_color);
         color_change |= ImGui::ColorEdit3("WireFrame", (float*)&wire_color);
         ImGui::SliderFloat("Wire width", (float*)&wire_width, 0., 4.);
@@ -198,8 +200,62 @@ int main(int, char**) {
             default:
                 break;
             }
+
+            if (borders) {
+                Vector eye = Vector(200., 200., 200.);
+                glm::vec3 orb = orbiter.Position;
+                eye = 100. * Vector(orb.x, orb.y, orb.z);
+
+                std::vector<bool> visibility_list;
+                for (int i = 1; i < topo_mesh.faces.size(); i++) {
+                    Vector normal = topo_mesh.faces[i].ToTriangle(&topo_mesh).Normal();
+                    Point barycentre = topo_mesh.faces[i].ToTriangle(&topo_mesh).Barycentre();
+                    Vector vision_dir = barycentre - eye;
+                    bool visible = Dot(normal, vision_dir) < 0;
+
+                    visibility_list.push_back(visible);
+
+                }
+                for (int i = 0; i < topo_mesh.faces.size() - 1; i++) {
+                    unsigned int id_a = topo_mesh.faces[i + 1].Face_ID[0];
+                    unsigned int id_b = topo_mesh.faces[i + 1].Face_ID[1];
+                    unsigned int id_c = topo_mesh.faces[i + 1].Face_ID[2];
+
+                    if (id_a == 0 || id_b == 0 || id_c == 0) {
+                        mesh.SetColor(3 * i, glm::vec3(0., 0., 0.));
+                        mesh.SetColor(3 * i + 1, glm::vec3(0., 0., 0.));
+                        mesh.SetColor(3 * i + 2, glm::vec3(0., 0., 0.));
+                        continue;
+                    }
+
+                    bool v = visibility_list[i];
+                    bool v_a = visibility_list[id_a - 1];
+                    bool v_b = visibility_list[id_b - 1];
+                    bool v_c = visibility_list[id_c - 1];
+
+                    if (v && !(v_a && v_b && v_c)) {
+                        mesh.SetColor(3 * i, glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * i + 1, glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * i + 2, glm::vec3(1., 0., 0.));
+
+                        mesh.SetColor(3 * (id_a - 1), glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * (id_a - 1) + 1, glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * (id_a - 1) + 2, glm::vec3(1., 0., 0.));
+
+                        mesh.SetColor(3 * (id_b - 1), glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * (id_b - 1) + 1, glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * (id_b - 1) + 2, glm::vec3(1., 0., 0.));
+
+                        mesh.SetColor(3 * (id_c - 1), glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * (id_c - 1) + 1, glm::vec3(1., 0., 0.));
+                        mesh.SetColor(3 * (id_c - 1) + 2, glm::vec3(1., 0., 0.));
+                    }
+
+                }
+            }
+
             mesh.setupMesh();
-            color_change = false;
+            if (!borders) color_change = false;
             tex_change = false;
         }
 
