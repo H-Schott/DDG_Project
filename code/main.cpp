@@ -54,6 +54,7 @@ float wire_color[4] = { 0.53, 0.53, 0.53, 1. };
 float wire_width = 0.5;
 
 bool wireframe = false;
+bool postProcess = false;
 bool borders = false;
 
 bool tex_change = false;
@@ -152,6 +153,12 @@ int main(int, char**) {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
+
+
+    quad_shader.use();
+    quad_shader.setInt("screenTexture", 0);
+
+
     // frame buffer creation
     unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
@@ -192,6 +199,7 @@ int main(int, char**) {
         ImGui::SetNextWindowSize(ImVec2(250, 400));
         ImGui::Begin("Display");
         ImGui::Checkbox("WireFrame", &wireframe);
+        ImGui::Checkbox("PostPross", &postProcess);
         color_change |= ImGui::Checkbox("Borders", &borders);
         color_change |= ImGui::ColorEdit3("Triangles", (float*)&triangle_color);
         color_change |= ImGui::ColorEdit3("WireFrame", (float*)&wire_color);
@@ -223,6 +231,7 @@ int main(int, char**) {
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glEnable(GL_DEPTH_TEST);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -344,10 +353,12 @@ int main(int, char**) {
         glClear(GL_COLOR_BUFFER_BIT);
 
         quad_shader.use();
+        quad_shader.setBool("applyProcessing", postProcess);
         glBindVertexArray(quadVAO);
         glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDrawArrays(GL_TRIANGLES, 0, 6);
+        
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -362,8 +373,15 @@ int main(int, char**) {
 
     mesh.Release();
 
+    glDeleteFramebuffers(1, &framebuffer);
+    glDeleteRenderbuffers(1, &rbo);
+    glDeleteVertexArrays(1, &quadVAO);
+    glDeleteBuffers(1, &quadVBO);
+
     glDeleteProgram(object_shader.ID);
     glDeleteProgram(debug_shader.ID);
+    glDeleteProgram(quad_shader.ID);
+
     glfwTerminate();
     return 0;
 }
@@ -409,5 +427,5 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
+    //glViewport(0, 0, width, height);
 }
