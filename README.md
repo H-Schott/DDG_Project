@@ -4,6 +4,7 @@ OpenGL project for Discrete Differential Geometry
 
 **Work In Progress**
 
+Features:
 - mesh topology class
 - mesh visualization
 - laplacian computation
